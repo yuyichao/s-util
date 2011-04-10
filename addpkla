@@ -1,0 +1,12 @@
+#!/bin/bash
+for arg in $@
+do
+	(
+	    echo '['${arg}']'
+	    echo "Identity=unix-user:yuyichao"
+	    echo "Action=${arg}"
+	    echo "ResultAny=no"
+	    echo "ResultInactive=no"
+	    echo "ResultActive=yes"
+	) > /etc/polkit-1/localauthority/50-local.d/${arg}.pkla
+done
