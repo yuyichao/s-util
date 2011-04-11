@@ -4,13 +4,13 @@ for ((i = 1;i < $#;i++)) ;do
     case ${!i} in
 	-b)
 	    background=1
-	    shift i
+	    shift $i
 	    ;;
     esac
 done
 if [ $background == 1 ] ;then
     wget -c -r -np -k -L -p $1 &> $1.log &
-elsen
+else
     wget -c -r -np -k -L -p $1
 fi
 
