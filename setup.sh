@@ -1,5 +1,7 @@
-if [[ ":${PATH}:" =~ ":/home/yuyichao/bin:" ]] ;then
-    PATH="${PATH}"
+S_UTIL_INSTALL_DIR=@@install_dir
+if [[ ":${PATH}:" =~ ":${S_UTIL_INSTALL_DIR}:" ]] ;then
+    PATH=${PATH}
 else
-    PATH="${PATH}:/home/yuyichao/bin"
+    PATH="${PATH}:${S_UTIL_INSTALL_DIR}"
 fi
+export PATH
