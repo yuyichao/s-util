@@ -1,2 +1,9 @@
 #!/bin/bash
+function s_shelp()
+{
+    echo "This command simply show its pid."
+}
+
+. "${S_UTIL_INSTALL_DIR}/s_init.sh"
+
 echo $$
