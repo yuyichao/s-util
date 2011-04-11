@@ -7,10 +7,12 @@ for ((i = 1;i <= $#;i++)) ;do
 	    else
 		echo "HELP_INFO"
 	    fi
+	    shift $i
 	    exit
 	    ;;
 	-v|--version)
 	    echo ${S_U_VERSION}
+	    shift $i
 	    exit
     esac
 done
