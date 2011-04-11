@@ -1,1 +1,8 @@
 #!/bin/bash
+
+
+if [[ "$S_UTIL_INSTALL_DIR" =~ "^${HOME}" ]] ;then
+    BASHRC=${HOME}/.bashrc
+else
+    BASHRC=/etc/bash.bashrc
+fi
