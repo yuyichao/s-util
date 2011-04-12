@@ -1,0 +1,30 @@
+#!/bin/bash
+function s_shelp()
+{
+    echo "This command search for files in the PATH"
+}
+
+. "${S_UTIL_INSTALL_DIR}/s_init.sh"
+
+NONE_EXEC=0
+REG=0
+
+for ((i = 0;i <= $#;)) ;do
+    case ${!i} in
+	-r|--reg)
+	    shift $i
+	    REG=1
+	    ;;
+	-n|--noexec)
+	    shift $i
+	    NONE_EXEC=1
+	    ;;
+	-p|--path)
+	    shift $i
+	    PATH=${!i}
+	    shift $i
+	    ;;
+	*)
+	    let 'i++'
+	    ;;
+    esac
