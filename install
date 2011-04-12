@@ -23,7 +23,7 @@ if [ "$S_INSTALL_DIST" = "" ] ;then
 fi
 
 if [ "$S_BASH_RC" = "" ] ;then
-    if [[ "$S_INSTALL_DIR" =~ "^${HOME}" ]] ;then
+    if [[ "$S_INSTALL_DIST" =~ ^${HOME} ]] ;then
 	S_BASH_RC=${HOME}/.bashrc
     else
 	S_BASH_RC=/etc/bash.bashrc
@@ -35,6 +35,11 @@ for file in $(find ! -regex '\./install' -and ! -name '.*' -and ! -regex '.*/\.[
 	sed -e "s:@@install_dir:${S_INSTALL_DIST}:g" < "${file}" > ${S_INSTALL_DIST}/setup.sh
 	chmod 644 ${S_INSTALL_DIST}/setup.sh
 	echo "${S_INSTALL_DIST}/setup.sh" >> s_u_install.lst
+	continue
+    fi
+    if [ "$file" = "./s_init.sh" ] ;then
+	install -m644 ${file} ${S_INSTALL_DIST}/${file}
+	echo "${S_INSTALL_DIST}/s_init.sh" >> s_u_install.lst
 	continue
     fi
     install -m755 ${file} ${S_INSTALL_DIST}/${file}
