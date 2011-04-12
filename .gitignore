@@ -2,4 +2,4 @@
 !.gitignore
 *~
 .*/
-s_u_install.lst
+*.lst

@@ -5,7 +5,7 @@ for ((i = 1;i <= $#;i++)) ;do
 	    if type s_shelp &> /dev/null ;then
 		s_shelp
 	    else
-		echo "HELP_INFO"
+		echo "$HELP_INFO"
 	    fi
 	    shift $i
 	    exit
