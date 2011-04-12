@@ -8,6 +8,7 @@ function s_shelp()
 
 NONE_EXEC=0
 REG=0
+FULL_PATH=0
 
 for ((i = 0;i <= $#;)) ;do
     case ${!i} in
@@ -24,6 +25,10 @@ for ((i = 0;i <= $#;)) ;do
 	    PATH=${!i}
 	    shift $i
 	    ;;
+	-f|--full)
+	    shift $i
+	    FULL_PATH=1
+	    ;;
 	*)
 	    let 'i++'
 	    ;;
@@ -33,8 +38,15 @@ done
 command="find -L ${PATH//:/ } -maxdepth 1 -type f"
 [ ${NONE_EXEC} = 0 ] && command="${command} -and -perm /111"
 
+if [ "$FULL_PATH" = 1 ] ;then
+    EXTRA=''
+else
+    EXTRA='s:^.*/::g'
+fi
+
 if [ $# = "0" ] ;then
-    $command
+    $command | sed -e "${EXTRA}"
+    exit
 fi
 
 ONE_KEYWORD=0
@@ -50,5 +62,5 @@ for ((i = 1;i <= $#;i++)) ;do
 	${command} -regex ".*/${key}"
     else
 	${command} -name "${key}"
-    fi
+    fi | sed -e "${EXTRA}"
 done
