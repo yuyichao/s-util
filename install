@@ -20,7 +20,7 @@ function s_uninstall()
     fi
 }
 
-for ((i = 1;i <= $#;i++)) ;do
+for ((i = 1;i <= $#;)) ;do
     case ${!i} in
 	-t)
 	    shift $i
@@ -36,6 +36,9 @@ for ((i = 1;i <= $#;i++)) ;do
 	    shift $i
 	    s_uninstall
 	    exit
+	    ;;
+	*)
+	    let 'i++'
 	    ;;
     esac
 done
@@ -62,13 +65,14 @@ echo "${S_INSTALL_DIST}" >> s_u_vars.lst
 echo "${S_BASH_RC}" >> s_u_vars.lst
 
 for file in $(find ! -regex '\./install' -and ! -name '.*' -and ! -regex '.*/\.[^/]*/.*' -and ! -regex '.*\.lst' -and ! -regex '\./README') ;do
-    if [ "$file" = "./setup.sh" ] ;then
+    file=${file#./}
+    if [ "$file" = "setup.sh" ] ;then
 	sed -e "s:@@install_dir:${S_INSTALL_DIST}:g" < "${file}" > ${S_INSTALL_DIST}/setup.sh
 	chmod 644 ${S_INSTALL_DIST}/setup.sh
 	echo "${S_INSTALL_DIST}/setup.sh" >> s_u_install.lst
 	continue
     fi
-    if [ "$file" = "./s_init.sh" ] ;then
+    if [ "$file" = "s_init.sh" ] ;then
 	install -m644 ${file} ${S_INSTALL_DIST}/${file}
 	echo "${S_INSTALL_DIST}/s_init.sh" >> s_u_install.lst
 	continue

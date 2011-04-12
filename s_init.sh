@@ -1,5 +1,5 @@
 S_U_VERSION=0.0.1
-for ((i = 1;i <= $#;i++)) ;do
+for ((i = 1;i <= $#;)) ;do
     case ${!i} in
 	-h|--help)
 	    if type s_shelp &> /dev/null ;then
@@ -14,5 +14,9 @@ for ((i = 1;i <= $#;i++)) ;do
 	    echo ${S_U_VERSION}
 	    shift $i
 	    exit
+	    ;;
+	*)
+	    let 'i++'
+	    ;;
     esac
 done

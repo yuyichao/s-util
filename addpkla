@@ -6,13 +6,15 @@ if [ $(id -u) != "0" ] ;then
     exit
 fi
 
-for ((i = 0;i <= $@;i++)) ;do
+for ((i = 0;i <= $@;)) ;do
     case ${!i} in
 	-u)
 	    shift $i
 	    S_USERNAME=${!i}
 	    shift $i
 	    ;;
+	*)
+	    let 'i++'
 done
 
 for arg in $@
