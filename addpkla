@@ -1,9 +1,25 @@
 #!/bin/bash
+
+if [ $(id -u) != "0" ] ;then
+    export S_USERNAME=$(whoami)
+    sudo $0
+    exit
+fi
+
+for ((i = 0;i <= $@;i++)) ;do
+    case ${!i} in
+	-u)
+	    shift $i
+	    S_USERNAME=${!i}
+	    shift $i
+	    ;;
+done
+
 for arg in $@
 do
 	(
 	    echo '['${arg}']'
-	    echo "Identity=unix-user:yuyichao"
+	    echo "Identity=unix-user:${S_USERNAME}"
 	    echo "Action=${arg}"
 	    echo "ResultAny=no"
 	    echo "ResultInactive=no"
