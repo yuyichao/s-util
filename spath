@@ -28,3 +28,27 @@ for ((i = 0;i <= $#;)) ;do
 	    let 'i++'
 	    ;;
     esac
+done
+
+command="find -L ${PATH//:/ } -maxdepth 1 -type f"
+[ ${NONE_EXEC} = 0 ] && command="${command} -and -perm /111"
+
+if [ $# = "0" ] ;then
+    $command
+fi
+
+ONE_KEYWORD=0
+
+if [ $# = "1" ] ;then
+    ONE_KEYWORD=1
+fi
+
+for ((i = 1;i <= $#;i++)) ;do
+    key="${!i}"
+    [ ${ONE_KEYWORD} = 0 ] && echo "${key}:"
+    if [ "$REG" = 1 ] ;then
+	${command} -regex ".*/${key}"
+    else
+	${command} -name "${key}"
+    fi
+done

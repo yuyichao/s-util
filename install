@@ -64,7 +64,7 @@ rm *.lst &> /dev/null
 echo "${S_INSTALL_DIST}" >> s_u_vars.lst
 echo "${S_BASH_RC}" >> s_u_vars.lst
 
-for file in $(find ! -regex '\./install' -and ! -name '.*' -and ! -regex '.*/\.[^/]*/.*' -and ! -regex '.*\.lst' -and ! -regex '\./README') ;do
+for file in $(find ! -regex '\./install' -and ! -name '.*' -and ! -regex '.*/\.[^/]*/.*' -and ! -regex '.*\.lst' -and ! -regex '\./README' -and ! -regex '.*~') ;do
     file=${file#./}
     if [ "$file" = "setup.sh" ] ;then
 	sed -e "s:@@install_dir:${S_INSTALL_DIST}:g" < "${file}" > ${S_INSTALL_DIST}/setup.sh
