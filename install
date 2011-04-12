@@ -1,10 +1,47 @@
 #!/bin/bash
 for ((i = 1;i <= $#;i++)) ;do
-    
+    case ${!i} in
+	-t)
+	    shift $i
+	    S_INSTALL_DIST=${!i}
+	    shift $i
+	    ;;
+	-r)
+	    shift $i
+	    S_BASH_RC=${!i}
+	    shift $i
+	    ;;
+    esac
 done
 
-if [[ "$S_UTIL_INSTALL_DIR" =~ "^${HOME}" ]] ;then
-    BASHRC=${HOME}/.bashrc
-else
-    BASHRC=/etc/bash.bashrc
+if [ "$S_INSTALL_DIST" = "" ] ;then
+    if [ "$(id -u)" = "0" ] ;then
+	S_INSTALL_DIST="/usr/bin"
+    else
+	S_INSTALL_DIST="${HOME}/bin"
+    fi
 fi
+
+if [ "$S_BASH_RC" = "" ] ;then
+    if [[ "$S_INSTALL_DIR" =~ "^${HOME}" ]] ;then
+	S_BASH_RC=${HOME}/.bashrc
+    else
+	S_BASH_RC=/etc/bash.bashrc
+    fi
+fi
+
+for file in $(find ! -regex '\./install' -and ! -name '.*' -and ! -regex '.*/\.[^/]*/.*') ;do
+    if [ "$file" = "./setup.sh" ] ;then
+	sed -e "s:@@install_dir:${S_INSTALL_DIST}:g" < "${file}" > ${S_INSTALL_DIST}/setup.sh
+	chmod 644 ${S_INSTALL_DIST}/setup.sh
+	echo "${S_INSTALL_DIST}/setup.sh" >> s_u_install.lst
+	continue
+    fi
+    install -m755 ${file} ${S_INSTALL_DIST}/${file}
+    echo "${S_INSTALL_DIST}/${file}" >> s_u_install.lst
+done
+
+echo '##^^this part is generate automatically when installing' >> ${S_BASH_RC}
+echo "[ -r ${S_INSTALL_DIST}/setup.sh ] && . ${S_INSTALL_DIST}/setup.sh" >> ${S_BASH_RC}
+echo '##$$end' >> ${S_BASH_RC}
+
