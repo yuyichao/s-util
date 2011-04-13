@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 #
 # usage: import-cert.sh remote.host.name [port]
 #

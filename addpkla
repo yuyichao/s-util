@@ -1,12 +1,11 @@
 #!/bin/bash
 
 if [ $(id -u) != "0" ] ;then
-    export S_USERNAME=$(whoami)
-    sudo $0
+    sudo $0 -u $(whoami) $@
     exit
 fi
 
-for ((i = 0;i <= $@;)) ;do
+for ((i = 0;i <= $#;)) ;do
     case ${!i} in
 	-u)
 	    shift $i
@@ -15,6 +14,8 @@ for ((i = 0;i <= $@;)) ;do
 	    ;;
 	*)
 	    let 'i++'
+	    ;;
+	esac
 done
 
 for arg in $@
@@ -26,5 +27,5 @@ do
 	    echo "ResultAny=no"
 	    echo "ResultInactive=no"
 	    echo "ResultActive=yes"
-	) > /etc/polkit-1/localauthority/50-local.d/${arg}.pkla
+	) >> /etc/polkit-1/localauthority/50-local.d/${arg}.pkla
 done
