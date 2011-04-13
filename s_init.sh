@@ -1,4 +1,4 @@
-S_U_VERSION=0.0.1
+S_U_VERSION=0.1.0
 for ((i = 1;i <= $#;)) ;do
     case ${!i} in
 	-h|--help)

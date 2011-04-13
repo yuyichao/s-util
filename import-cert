@@ -1,0 +1,13 @@
+#!/bin/bash
+function s_shelp()
+{
+    echo "This command import the certificate of a given website."
+}
+
+. "${S_UTIL_INSTALL_DIR}/s_init.sh"
+
+REMHOST=$1
+REMPORT=${2:-443}
+openssl s_client -connect "${REMHOST}:${REMPORT}" </dev/null 2>/dev/null | sed -ne '/-BEGIN CERTIFICATE-/,/-END CERTIFICATE-/p' > "$$${REMHOST}:${REMPORT}"
+certutil -d sql:$HOME/.pki/nssdb -A -t TC -n "$REMHOST" -i "$$${REMHOST}:${REMPORT}"
+rm "$$${REMHOST}:${REMPORT}"
