@@ -2,6 +2,12 @@
 function s_shelp()
 {
     echo "This command import the certificate of a given website."
+    echo "USAGE:"
+    echo $'\t'"$0 [OPTIONS] address [port]"
+    echo "OPTIONS"
+    echo $'\t'"-v/--version: show version number and exit"
+    echo $'\t'"-h/--help: show this help and exit"
+    echo "the default port is 443 (https)"
 }
 
 . "${S_UTIL_INSTALL_DIR}/s_init.sh"

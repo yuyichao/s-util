@@ -1,5 +1,18 @@
 #!/bin/bash
 
+function s_shelp()
+{
+    echo "This command add a permission of a certain action to polkit"
+    echo "USAGE:"
+    echo $'\t'"$0 [OPTIONS] policies"
+    echo "OPTIONS:"
+    echo $'\t'"-u/--user USER: to add a permission for USER"
+    echo $'\t'"-v/--version: show the version number"
+    echo $'\t'"-h/--help: show this help and exit"
+}
+
+. "${S_UTIL_INSTALL_DIR}/s_init.sh"
+
 if [ $(id -u) != "0" ] ;then
     sudo $0 -u $(whoami) $@
     exit
@@ -7,7 +20,7 @@ fi
 
 for ((i = 0;i <= $#;)) ;do
     case ${!i} in
-	-u)
+	-u|--user)
 	    shift $i
 	    S_USERNAME=${!i}
 	    shift $i

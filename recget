@@ -2,6 +2,12 @@
 function s_shelp()
 {
     echo "This command download a website recursively using wget"
+    echo "USAGE:"
+    echo $'\t'"$0 [OPTIONS] url"
+    echo "OPTIONS:"
+    echo $'\t'"-b/--background: run in the background"
+    echo $'\t'"-v/--version: show the version number and exit"
+    echo $'\t'"-h/--help: show this help and exit"
 }
 
 . "${S_UTIL_INSTALL_DIR}/s_init.sh"
@@ -9,7 +15,7 @@ function s_shelp()
 background=0
 for ((i = 1;i < $#;)) ;do
     case ${!i} in
-	-b)
+	-b|--background)
 	    background=1
 	    shift $i
 	    ;;
