@@ -1,0 +1,2 @@
+
+mitclass () { curl http://web.mit.edu/registrar/www/schedules/csbindex.shtml  | grep -e "$*" | grep "L01"; }
