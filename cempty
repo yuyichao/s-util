@@ -1,7 +1,7 @@
 #!/bin/bash
 HELP_INFO='This script delete all the empty folders recursively.'
 
-. "${S_UTIL_INSTALL_DIR}/s_init.sh"
+. s_init.sh
 
 [ "$#" = "0" ] && find -depth -type d -exec rmdir {} \; 2> /dev/null
 

@@ -10,7 +10,7 @@ function s_shelp()
     echo $'\t'"-h/--help: show this help and exit"
 }
 
-. "${S_UTIL_INSTALL_DIR}/s_init.sh"
+. s_init.sh
 
 background=0
 for ((i = 1;i < $#;)) ;do

@@ -11,7 +11,7 @@ function s_shelp()
     echo $'\t'"-h/--help: show this help and exit"
 }
 
-. "${S_UTIL_INSTALL_DIR}/s_init.sh"
+. s_init.sh
 
 if [ $(id -u) != "0" ] ;then
     sudo $0 -u $(whoami) $@

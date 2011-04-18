@@ -1,5 +1,5 @@
 #!/bin/bash
 HELP_INFO='This script clean up all the backup files (*~) in current directory.'
-. "${S_UTIL_INSTALL_DIR}/s_init.sh"
+. s_init.sh
 
 rm *~ .*~ &> /dev/null

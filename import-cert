@@ -10,7 +10,7 @@ function s_shelp()
     echo "the default port is 443 (https)"
 }
 
-. "${S_UTIL_INSTALL_DIR}/s_init.sh"
+. s_init.sh
 
 REMHOST=$1
 REMPORT=${2:-443}

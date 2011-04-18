@@ -13,7 +13,7 @@ function s_shelp()
     echo $'\t'"-h/--help: show this help and exit"
 }
 
-. "${S_UTIL_INSTALL_DIR}/s_init.sh"
+. s_init.sh
 
 NONE_EXEC=0
 REG=0
