@@ -13,7 +13,7 @@ for ((i = 1;i <= $#;i++)) ;do
 done
 
 if [ $rec = 1 ] ;then
-    find -name "*~" -exec rm {} /;
+    find -name "*~" -exec rm {} \;
 else
-    find -name "*~" -maxdepth 1 -exec rm {} /;
+    find -maxdepth 1 -name "*~" -exec rm {} \;
 fi
