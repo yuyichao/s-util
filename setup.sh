@@ -5,7 +5,7 @@ else
     export PATH="${PATH}:${S_UTIL_INSTALL_DIR}"
 fi
 
-_plaste()
+_paste()
 {
     if [[ "$BASH_SOURCE" =~ ^/ ]] ;then
 	dir="$(dirname "${BASH_SOURCE}")/_pb"
@@ -15,4 +15,4 @@ _plaste()
     COMPREPLY=($(find "${dir}" -mindepth 1 -maxdepth 1 -name "${2}*" -exec basename {} \;))
 }
 
-complete -F _plaste plaste
+complete -F _paste paste
