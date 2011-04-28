@@ -12,7 +12,7 @@ _plaste()
     else
 	dir="${PWD}/$(dirname "${BASH_SOURCE}")/_pb"
     fi
-    COMPREPLY=($(ls -A "$dir"))
+    COMPREPLY=($(find "${dir}" -mindepth 1 -maxdepth 1 -name "${2}*" -exec basename {} \;))
 }
 
 complete -F _plaste plaste
