@@ -12,6 +12,7 @@ function s_uninstall()
     } < s_u_vars.lst
     begin=$(grep -n '^##\^\^' ${S_BASH_RC} |  cut -d: -f1 | head -1)
     end=$(grep -n '^##\$\$' ${S_BASH_RC} |  cut -d: -f1 | head -1)
+    rmdir "${S_INSTALL_DIST}/_pb"
     if [ "$begin" -lt "$end" ] &> /dev/null ;then
 	mv ${S_BASH_RC} ${S_BASH_RC}~
 	awk "NR < ${begin} || NR > ${end}" < ${S_BASH_RC}~ > ${S_BASH_RC} && rm s_u_vars.lst
@@ -50,6 +51,8 @@ if [ "$S_INSTALL_DIST" = "" ] ;then
 	S_INSTALL_DIST="${HOME}/bin"
     fi
 fi
+
+[ -d "${S_INSTALL_DIST}/_pb" ] || mkdir "${S_INSTALL_DIST}/_pb"
 
 if [ "$S_BASH_RC" = "" ] ;then
     if [[ "$S_INSTALL_DIST" =~ ^${HOME} ]] ;then

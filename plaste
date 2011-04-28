@@ -1,0 +1,10 @@
+#!/bin/bash
+if [[ "$BASH_SOURCE" =~ ^/ ]] ;then
+    srcdir="$(dirname "${BASH_SOURCE}")/_pb"
+else
+    srcdir="${PWD}/$(dirname "${BASH_SOURCE}")/_pb"
+fi
+
+for ((i = 1;i <= $#;i++)) ;do
+    cp "${srcdir}/${!i}" .
+done
