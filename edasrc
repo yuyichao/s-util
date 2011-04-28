@@ -1,0 +1,5 @@
+#!/bin/bash
+filelist=$(find -name "*.h" -o -name "*.c" -o -name "*.cpp" -o -iname "makefile")
+if [ "${filelist}" != "" ] ;then
+    emacs ${filelist} &
+fi

@@ -4,3 +4,15 @@ if [[ ":${PATH}:" =~ ":${S_UTIL_INSTALL_DIR}:" ]] ;then
 else
     export PATH="${PATH}:${S_UTIL_INSTALL_DIR}"
 fi
+
+_plaste()
+{
+    if [[ "$BASH_SOURCE" =~ ^/ ]] ;then
+	dir="$(dirname "${BASH_SOURCE}")/_pb"
+    else
+	dir="${PWD}/$(dirname "${BASH_SOURCE}")/_pb"
+    fi
+    COMPREPLY=($(ls -A "$dir"))
+}
+
+complete -F _plaste plaste

@@ -6,5 +6,5 @@ else
 fi
 
 for ((i = 1;i <= $#;i++)) ;do
-    cp "${srcdir}/${!i}" .
+    cp -r "${srcdir}/${!i}" .
 done
