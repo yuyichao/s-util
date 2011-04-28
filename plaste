@@ -6,5 +6,12 @@ else
 fi
 
 for ((i = 1;i <= $#;i++)) ;do
-    cp -r "${srcdir}/${!i}" .
+    file="${srcdir}/${!i}"
+    if [ -d "${file}" ] ;then
+	cp -r "${file}/" .
+    else
+	if [ -f "${file}" ] ;then
+	    cp "${file}" .
+	fi
+    fi
 done
