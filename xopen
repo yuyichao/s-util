@@ -1,2 +1,6 @@
 #!/bin/bash
+HELP_INFO='This command use xdg-open to open arbitrary file with default program and redirect all annoy console output to /dev/null'
+
+. s_init.sh
+
 xdg-open $@ </dev/null &>/dev/null

@@ -1,8 +1,5 @@
 #!/bin/bash
-s_shelp()
-{
-    echo "This command simply show its pid."
-}
+HELP_INFO="This command simply show its pid."
 
 . s_init.sh
 

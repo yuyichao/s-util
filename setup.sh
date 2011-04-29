@@ -46,11 +46,14 @@ _s_util_general_args()
 __s_util_g_comp()
 {
     local cur possible command
+    COMPREPLY=()
     command="${COMP_WORDS[0]}"
     cur="${COMP_WORDS[COMP_CWORD]}"
+    prev="${COMP_WORDS[COMP_CWORD - 1]}"
     _s_util_general_args ||
     { type "_${command}" &>/dev/null && "_${command}"; }
-    COMPREPLY=($(compgen -W "${possible[*]}" -- ${cur}))
+    _s_in_array '' "${possible[@]}" && COMPREPLY=('')
+    COMPREPLY=("${COMPREPLY[@]}" $(compgen -W "${possible[*]}" -- ${cur}))
 }
 
 _clpbd()
@@ -81,10 +84,35 @@ _clpbd()
     fi
 }
 
+_xopen()
+{
+    possible=("${possible[@]}" $(compgen -f ${cur}))
+}
+
+_spid()
+{
+    possible=("${possible[@]}" '')
+}
+
+_spath()
+{
+    local s_opts l_opts
+    s_opts=(-r --reg -n --noexec -f --full)
+    l_opts=(-p --path)
+    _s_in_array "${prev}" "${l_opts[@]}" || {
+	possible=("${possible[@]}" "${s_opts[@]}" "${l_opts[@]}" '')
+	return 0
+    }
+    _s_in_array "${prev}" -p --path && {
+	possible=("${possible[@]}" $(compgen -f ${cur}))
+	return 0
+    }
+}
+
 reg_complete()
 {
     local complete_list
-    complete_list=(addpkla cback cempty clpbd import-cert recget spath spid)
+    complete_list=(addpkla cback cempty clpbd import-cert recget spath spid xopen)
 
     for command in "${complete_list[@]}" ;do
 	complete -F __s_util_g_comp "${command}"

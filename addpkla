@@ -1,14 +1,15 @@
 #!/bin/bash
-
-function s_shelp()
+s_shelp()
 {
-    echo "This command add a permission of a certain action to polkit"
-    echo "USAGE:"
-    echo $'\t'"$0 [OPTIONS] policies"
-    echo "OPTIONS:"
-    echo $'\t'"-u/--user USER: to add a permission for USER"
-    echo $'\t'"-v/--version: show the version number"
-    echo $'\t'"-h/--help: show this help and exit"
+    cat <<EOF
+This command add a permission of a certain action to polkit
+USAGE:
+	$0 [OPTIONS] policies
+OPTIONS:
+	-u/--user USER: to add a permission for USER
+	-v/--version: show the version number
+	-h/--help: show this help and exit
+EOF
 }
 
 . s_init.sh
@@ -33,12 +34,13 @@ done
 
 for arg in $@
 do
-	(
-	    echo '['${arg}']'
-	    echo "Identity=unix-user:${S_USERNAME}"
-	    echo "Action=${arg}"
-	    echo "ResultAny=no"
-	    echo "ResultInactive=no"
-	    echo "ResultActive=yes"
-	) >> /etc/polkit-1/localauthority/50-local.d/${arg}.pkla
+    cat <<EOF
+[${arg}]
+Identity=unix-user:${S_USERNAME}
+Action=${arg}
+ResultAny=no
+ResultInactive=no
+ResultActive=yes
+EOF 
+>> /etc/polkit-1/localauthority/50-local.d/${arg}.pkla
 done
