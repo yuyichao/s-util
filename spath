@@ -1,16 +1,18 @@
 #!/bin/bash
 function s_shelp()
 {
-    echo "This command search for files in the PATH"
-    echo "USAGE:"
-    echo $'\t'"$0 [OPTIONS] [KEYWORDS]"
-    echo "OPTIONS:"
-    echo $'\t'"-r/--reg: use regular expression"
-    echo $'\t'"-n/--noexec: also search not executable files"
-    echo $'\t'"-p/--path PATH: search PATH instead of default PATH"
-    echo $'\t'"-f/--full: show the full path of the command found"
-    echo $'\t'"-v/--version: show the version number and exit"
-    echo $'\t'"-h/--help: show this help and exit"
+cat <<EOF
+This command search for files in the PATH
+USAGE:
+	$0 [OPTIONS] [KEYWORDS]
+OPTIONS:
+	-r/--reg: use regular expression
+	-n/--noexec: also search not executable files
+	-p/--path PATH: search PATH instead of default PATH
+	-f/--full: show the full path of the command found
+	-v/--version: show the version number and exit
+	-h/--help: show this help and exit
+EOF
 }
 
 . s_init.sh

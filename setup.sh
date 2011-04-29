@@ -57,19 +57,19 @@ _clpbd()
 {
     local opts fopt
     if [ "$COMP_CWORD" == 1 ] ;then
-	opts="-c -d -p"
+	opts="-c --copy -d --delete -p --paste"
 	possible=("${possible[@]}" $(compgen -W "${opts}" -- ${cur}))
 	__s_clr_rpt_frm_psbl
 	return 0
     else
 	fopt="${COMP_WORDS[1]}"
 	case "${fopt}" in
-	    -c)
+	    -c|--copy)
 		possible=("${possible[@]}" $(compgen -f ${cur}))
 		__s_clr_rpt_frm_psbl		
 		return 0
 		;;
-	    -p|-d)
+	    -p|-d|--paste|--delete)
 		possible=("${possible[@]}" $(cd /tmp/_s_clipboard 2> /dev/null && compgen -f ${cur}))
 		__s_clr_rpt_frm_psbl
 		return 0

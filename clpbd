@@ -1,7 +1,18 @@
 #!/bin/bash
 s_shelp()
 {
-    echo "This is a command line clipboard"
+    cat <<EOF
+This is a command line clipboard
+USAGE
+	${1} [OPTIONS] FILENAMES
+OPTIONS
+	-d: delete from clipboard
+	-p: paste from clipboard
+	-c: copy files from current dir
+	-v/--version: show the version number and exit
+	-h/--help: show this help and exit
+EOF
+    
 }
 
 . s_init.sh
@@ -50,15 +61,15 @@ __delete()
 }
 
 case "$1" in
-    -c)
+    -c|--copy)
 	shift
 	__copy "$@"
 	;;
-    -p)
+    -p|--paste)
 	shift
 	__paste "$@"
 	;;
-    -d)
+    -d|--delete)
 	shift
 	__delete "$@"
 	;;
