@@ -56,6 +56,11 @@ __s_util_g_comp()
     COMPREPLY=("${COMPREPLY[@]}" $(compgen -W "${possible[*]}" -- ${cur}))
 }
 
+__s_incld_rdm()
+{
+    [[ "${cur}" == "" ]] && possible=("${possible[@]}" '')    
+}
+
 _clpbd()
 {
     local opts fopt
@@ -91,7 +96,7 @@ _xopen()
 
 _spid()
 {
-    [[ "${cur}" == "" ]] && possible=("${possible[@]}" '')
+    __s_incld_rdm
 }
 
 _spath()
@@ -100,12 +105,14 @@ _spath()
     s_opts=(-r --reg -n --noexec -f --full)
     l_opts=(-p --path)
     _s_in_array "${prev}" "${l_opts[@]}" || {
-	[[ "${cur}" == "" ]] && possible=("${possible[@]}" '')
+	__s_incld_rdm
 	possible=("${possible[@]}" "${s_opts[@]}" "${l_opts[@]}")
+	__s_clr_rpt_frm_psbl
 	return 0
     }
     _s_in_array "${prev}" -p --path && {
 	possible=("${possible[@]}" $(compgen -f ${cur}))
+	__s_clr_rpt_frm_psbl
 	return 0
     }
 }
