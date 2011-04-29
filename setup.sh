@@ -91,7 +91,7 @@ _xopen()
 
 _spid()
 {
-    possible=("${possible[@]}" '')
+    [[ "${cur}" == "" ]] && possible=("${possible[@]}" '')
 }
 
 _spath()
@@ -100,7 +100,8 @@ _spath()
     s_opts=(-r --reg -n --noexec -f --full)
     l_opts=(-p --path)
     _s_in_array "${prev}" "${l_opts[@]}" || {
-	possible=("${possible[@]}" "${s_opts[@]}" "${l_opts[@]}" '')
+	[[ "${cur}" == "" ]] && possible=("${possible[@]}" '')
+	possible=("${possible[@]}" "${s_opts[@]}" "${l_opts[@]}")
 	return 0
     }
     _s_in_array "${prev}" -p --path && {
