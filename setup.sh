@@ -8,12 +8,12 @@ fi
 _clpbd()
 {
     cur="${COMP_WORDS[COMP_CWORD]}"
-    if [ "$COMP_CWORD" == 2 ] ;then
+    if [ "$COMP_CWORD" == 1 ] ;then
 	opts="-c -d -p"
 	COMPREPLY=($(compgen -W "${opts}" -- ${cur}))
 	return 0
     else
-	fopt="${COMP_WORDS[2]}"
+	fopt="${COMP_WORDS[1]}"
 	case "${fopt}" in
 	    -c)
 		COMPREPLY=($(compgen -f ${cur}))
