@@ -7,12 +7,8 @@ fi
 
 _fpaste()
 {
-    if [[ "$BASH_SOURCE" =~ ^/ ]] ;then
-	dir="$(dirname "${BASH_SOURCE}")/_pb"
-    else
-	dir="${PWD}/$(dirname "${BASH_SOURCE}")/_pb"
-    fi
-    COMPREPLY=($(find "${dir}" -mindepth 1 -maxdepth 1 -name "${2}*" -exec basename {} \;))
+    dir=/tmp/_s_clipboard
+    COMPREPLY=($(find "${dir}" -mindepth 1 -maxdepth 1 -name "${2}*" -exec basename {} \; 2> /dev/null))
 }
 
 complete -F _fpaste fpaste
