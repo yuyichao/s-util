@@ -36,22 +36,11 @@ __s_clr_rpt_frm_psbl()
 _s_util_general_args()
 {
     local general_args=(-h -v --version --help) i
-    possible=("${general_args[@]}")
-    __s_clr_rpt_frm_psbl
-    for ((i = 1;i < ${#COMP_WORDS[@]};i++)) ;do
-	if ((i == COMP_CWORD)) ;then
-	    continue
-	fi
-	if _s_in_array "${COMP_WORDS[i]}" "${general_args[@]}" ;then
-	    unset COMP_WORDS[i]
-	    COMP_WORDS=("${COMP_WORDS[@]}")
-	    if ((i < COMP_CWORD)) ;then
-		let 'COMP_CWORD--'
-	    fi
-	    let 'i--'
-	fi
+    [[ "${COMP_CWORD}" == 1 ]] && possible=("${general_args[@]}")
+    for ((i = 0;i < ${#general_args[@]};i++)) ;do
+	_s_in_array "${general_args[i]}" "${COMP_WORDS[@]:1}" && return 0
     done
-#    echo "${COMP_WORDS[@]}"
+    return 1
 }
 
 __s_util_g_comp()
@@ -59,8 +48,8 @@ __s_util_g_comp()
     local cur possible command
     command="${COMP_WORDS[0]}"
     cur="${COMP_WORDS[COMP_CWORD]}"
-    _s_util_general_args
-    type "_${command}" &>/dev/null && "_${command}"
+    _s_util_general_args ||
+    { type "_${command}" &>/dev/null && "_${command}"; }
     COMPREPLY=($(compgen -W "${possible[*]}" -- ${cur}))
 }
 
