@@ -5,10 +5,30 @@ else
     export PATH="${PATH}:${S_UTIL_INSTALL_DIR}"
 fi
 
-_fpaste()
+_clpbd()
 {
-    dir=/tmp/_s_clipboard
-    COMPREPLY=($(find "${dir}" -mindepth 1 -maxdepth 1 -name "${2}*" -exec basename {} \; 2> /dev/null))
+    cur="${COMP_WORDS[COMP_CWORD]}"
+    if [ "$COMP_CWORD" == 2 ] ;then
+	opts="-c -d -p"
+	COMPREPLY=($(compgen -W "${opts}" -- ${cur}))
+	return 0
+    else
+	fopt="${COMP_WORDS[2]}"
+	case "${fopt}" in
+	    -c)
+		COMPREPLY=($(compgen -f ${cur}))
+		return 0
+		;;
+	    -p|-d)
+		COMPREPLY=($(cd /tmp/_s_clipboard 2> /dev/null && compgen -f ${cur}))
+		return 0
+		;;
+	    *)
+		COMPREPLY=()
+		return 0
+		;;
+	esac
+    fi
 }
 
-complete -F _fpaste fpaste
+complete -F _clpbd clpbd
