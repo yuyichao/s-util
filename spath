@@ -20,6 +20,7 @@ EOF
 NONE_EXEC=0
 REG=0
 FULL_PATH=0
+s_path="${PATH}"
 
 for ((i = 1;i <= $#;)) ;do
     case ${!i} in
@@ -33,7 +34,7 @@ for ((i = 1;i <= $#;)) ;do
 	    ;;
 	-p|--path)
 	    shift $i
-	    PATH=${!i}
+	    s_path=${!i}
 	    shift $i
 	    ;;
 	-f|--full)
@@ -46,7 +47,7 @@ for ((i = 1;i <= $#;)) ;do
     esac
 done
 
-command="find -L ${PATH//:/ } -maxdepth 1 -type f"
+command="find -L ${s_path//:/ } -maxdepth 1 -type f"
 [ ${NONE_EXEC} = 0 ] && command="${command} -and -perm /111"
 
 if [ "$FULL_PATH" = 1 ] ;then

@@ -75,6 +75,7 @@ _clpbd()
 	    -c|--copy)
 		possible=("${possible[@]}" $(compgen -f ${cur}))
 		__s_clr_rpt_frm_psbl
+		compopt -o filenames
 		return 0
 		;;
 	    -p|-d|--paste|--delete)
@@ -92,6 +93,7 @@ _clpbd()
 _xopen()
 {
     possible=("${possible[@]}" $(compgen -f ${cur}))
+    compopt -o filenames
 }
 
 _spid()
@@ -112,6 +114,7 @@ _spath()
     }
     _s_in_array "${prev}" -p --path && {
 	possible=("${possible[@]}" $(compgen -f ${cur}))
+	compopt -o filenames
 	__s_clr_rpt_frm_psbl
 	return 0
     }
