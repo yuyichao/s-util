@@ -74,7 +74,7 @@ _clpbd()
 	case "${fopt}" in
 	    -c|--copy)
 		possible=("${possible[@]}" $(compgen -f ${cur}))
-		__s_clr_rpt_frm_psbl		
+		__s_clr_rpt_frm_psbl
 		return 0
 		;;
 	    -p|-d|--paste|--delete)
