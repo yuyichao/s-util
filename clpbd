@@ -1,0 +1,63 @@
+#!/bin/bash
+clpdir=/tmp/_s_clipboard
+[ -d "${clpdir}" ] || mkdir -m777 "${clpdir}" || exit 1
+
+LN=ln
+CP=cp
+RM=rm
+
+__copy()
+{
+    for ((i = 1;i <= $#;i++)) ;do
+	if [[ "${!i}" =~ ^/ ]] ;then
+	    file="${!i}"
+	else
+	    file="${PWD}/${!i}"
+	fi
+	${LN} -s "${file}" "${clpdir}" || exit 1
+    done
+}
+
+__paste()
+{
+    for ((i = 1;i <= $#;i++)) ;do
+	file="${clpdir}/${!i}"
+	if [ -d "${file}" ] ;then
+	    ${CP} -r "${file}/" . || exit 1
+	else
+	    if [ -f "${file}" ] ;then
+		${CP} "${file}" . || exit 1
+	    else
+		exit 1
+	    fi
+	fi
+    done
+}
+
+__delete()
+{
+    for ((i = 1;i <= $#;i++)) ;do
+	file="$(echo "${clpdir}/${!i}" | sed -e 's:/*$::g')"
+	${RM} "$file" || exit 1
+    done
+}
+
+case "$1" in
+    -c)
+	shift
+	__copy "$@"
+	;;
+    -p)
+	shift
+	__paste "$@"
+	;;
+    -d)
+	shift
+	__delete "$@"
+	;;
+    *)
+	echo "Unrecognized option ${1}"
+	exit 1
+	;;
+esac
+exit 0
