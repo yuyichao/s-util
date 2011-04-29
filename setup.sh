@@ -43,6 +43,16 @@ _s_util_general_args()
     return 1
 }
 
+__s_add_s_opts()
+{
+    _s_in_array "${prev}" "${l_opts[@]}" || {
+	possible=("${possible[@]}" "${s_opts[@]}" "${l_opts[@]}")
+	__s_clr_rpt_frm_psbl
+	return 0
+    }
+    return 1
+}
+
 __s_util_g_comp()
 {
     local cur possible command
@@ -106,18 +116,50 @@ _spath()
     local s_opts l_opts
     s_opts=(-r --reg -n --noexec -f --full)
     l_opts=(-p --path)
-    _s_in_array "${prev}" "${l_opts[@]}" || {
-	__s_incld_rdm
-	possible=("${possible[@]}" "${s_opts[@]}" "${l_opts[@]}")
-	__s_clr_rpt_frm_psbl
-	return 0
-    }
+    __s_add_s_opts && __s_incld_rdm && return 0
     _s_in_array "${prev}" -p --path && {
 	possible=("${possible[@]}" $(compgen -f ${cur}))
 	compopt -o filenames
 	__s_clr_rpt_frm_psbl
 	return 0
     }
+}
+
+_addpkla()
+{
+    __s_incld_rdm
+}
+
+_recget()
+{
+    local s_opts l_opts
+    s_opts=(-b --background)
+    l_opts=()
+    __s_add_s_opts
+    __s_incld_rdm
+}
+
+_import-cert()
+{
+    __s_incld_rdm
+}
+
+_cempty()
+{
+    possible=("${possible[@]}" $(compgen -f ${cur}))
+    compopt -o filenames
+    __s_clr_rpt_frm_psbl
+    __s_incld_rdm
+}
+
+_cback()
+{
+    local s_opts l_opts
+    s_opts=(-r)
+    l_opts=()
+    __s_add_s_opts
+    compopt -o filenames
+    __s_incld_rdm
 }
 
 reg_complete()
