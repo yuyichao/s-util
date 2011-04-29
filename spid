@@ -1,5 +1,5 @@
 #!/bin/bash
-function s_shelp()
+s_shelp()
 {
     echo "This command simply show its pid."
 }

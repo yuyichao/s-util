@@ -1,10 +1,17 @@
 #!/bin/bash
+s_shelp()
+{
+    echo "This is a command line clipboard"
+}
+
+. s_init.sh
+
 clpdir=/tmp/_s_clipboard
 [ -d "${clpdir}" ] || mkdir -m777 "${clpdir}" || exit 1
 
-LN=ln
-CP=cp
-RM=rm
+LN="ln"
+CP="cp -i"
+RM="rm"
 
 __copy()
 {
