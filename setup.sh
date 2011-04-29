@@ -8,7 +8,7 @@ fi
 _s_in_array()
 {
     local i
-    for ((i = 2;i < $#;i++)) ;do
+    for ((i = 2;i <= $#;i++)) ;do
 	if [[ "$1" == "${!i}" ]] ;then
 	    return 0
 	fi
@@ -16,29 +16,42 @@ _s_in_array()
     return 1
 }
 
+__s_clr_rpt_frm_psbl()
+{
+    local i j n
+    for ((i = 1;i < ${#COMP_WORDS[@]};i++)) ;do
+	if ((i == COMP_CWORD)) ;then
+	    continue
+	fi
+	n=${#possible[@]}
+	for ((j = 0;j < n;j++)) ;do
+	    if [[ "${COMP_WORDS[i]}" == "${possible[j]}" ]] ;then
+		unset possible[j]
+	    fi
+	done
+	possible=("${possible[@]}")
+    done
+}
+
 _s_util_general_args()
 {
-    local general_args=(-h -v --version --help) i j n
+    local general_args=(-h -v --version --help) i
+    possible=("${general_args[@]}")
+    __s_clr_rpt_frm_psbl
     for ((i = 1;i < ${#COMP_WORDS[@]};i++)) ;do
 	if ((i == COMP_CWORD)) ;then
 	    continue
 	fi
 	if _s_in_array "${COMP_WORDS[i]}" "${general_args[@]}" ;then
-	    n=${#general_args[@]}
-	    for ((j = 0;j < n;j++)) ;do
-		if [[ "${COMP_WORDS[i]}" == "${general_args[j]}" ]] ;then
-		    unset general_args[j]
-		fi
-	    done
-	    general_args=("${general_args[@]}")
-	    COMP_WORDS=("${COMP_WORDS[@]:0:i}" "${COMP_WORDS[@]:i + 1}")
+	    unset COMP_WORDS[i]
+	    COMP_WORDS=("${COMP_WORDS[@]}")
 	    if ((i < COMP_CWORD)) ;then
 		let 'COMP_CWORD--'
 	    fi
 	    let 'i--'
 	fi
     done
-    possible=("${general_args[@]}")
+#    echo "${COMP_WORDS[@]}"
 }
 
 __s_util_g_comp()
@@ -53,44 +66,23 @@ __s_util_g_comp()
 
 _clpbd()
 {
-    local opts fopt i j n
+    local opts fopt
     if [ "$COMP_CWORD" == 1 ] ;then
 	opts="-c -d -p"
 	possible=("${possible[@]}" $(compgen -W "${opts}" -- ${cur}))
+	__s_clr_rpt_frm_psbl
 	return 0
     else
 	fopt="${COMP_WORDS[1]}"
 	case "${fopt}" in
 	    -c)
 		possible=("${possible[@]}" $(compgen -f ${cur}))
-		for ((i = 2;i < ${#COMP_WORDS[@]};i++)) ;do
-		    if ((i == COMP_CWORD)) ;then
-			continue
-		    fi
-		    n=${#possible[@]}
-		    for ((j = 0;j < n;j++)) ;do
-			if [[ "${COMP_WORDS[i]}" == "${possible[j]}" ]] ;then
-			    unset possible[j]
-			fi
-		    done
-		    possible=("${possible[@]}")
-		done
+		__s_clr_rpt_frm_psbl		
 		return 0
 		;;
 	    -p|-d)
 		possible=("${possible[@]}" $(cd /tmp/_s_clipboard 2> /dev/null && compgen -f ${cur}))
-		for ((i = 2;i < ${#COMP_WORDS[@]};i++)) ;do
-		    if ((i == COMP_CWORD)) ;then
-			continue
-		    fi
-		    n=${#possible[@]}
-		    for ((j = 0;j < n;j++)) ;do
-			if [[ "${COMP_WORDS[i]}" == "${possible[j]}" ]] ;then
-			    unset possible[j]
-			fi
-		    done
-		    possible=("${possible[@]}")
-		done
+		__s_clr_rpt_frm_psbl
 		return 0
 		;;
 	    *)
