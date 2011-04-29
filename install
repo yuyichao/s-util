@@ -1,5 +1,5 @@
 #!/bin/bash
-function s_uninstall()
+s_uninstall()
 {
     [ -r s_u_install.lst ] && xargs rm < s_u_install.lst &> /dev/null && rm s_u_install.lst
     if ! [ -r s_u_vars.lst ] ;then

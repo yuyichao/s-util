@@ -22,23 +22,23 @@ REG=0
 FULL_PATH=0
 s_path="${PATH}"
 
-for ((i = 1;i <= $#;)) ;do
-    case ${!i} in
+for ((i = 0;i < ${#args[@]};)) ;do
+    case "${args[i]}" in
 	-r|--reg)
-	    shift $i
+	    darg $i
 	    REG=1
 	    ;;
 	-n|--noexec)
-	    shift $i
+	    darg $i
 	    NONE_EXEC=1
 	    ;;
 	-p|--path)
-	    shift $i
-	    s_path=${!i}
-	    shift $i
+	    darg $i
+	    s_path="${args[i]}"
+	    darg $i
 	    ;;
 	-f|--full)
-	    shift $i
+	    darg $i
 	    FULL_PATH=1
 	    ;;
 	*)
@@ -56,19 +56,19 @@ else
     EXTRA='s:^.*/::g'
 fi
 
-if [ $# = "0" ] ;then
+if [ ${#args[@]} = "0" ] ;then
     $command | sed -e "${EXTRA}"
     exit
 fi
 
 ONE_KEYWORD=0
 
-if [ $# = "1" ] ;then
+if [ ${#args[@]} = "1" ] ;then
     ONE_KEYWORD=1
 fi
 
-for ((i = 1;i <= $#;i++)) ;do
-    key="${!i}"
+for ((i = 0;i < ${#args[@]};i++)) ;do
+    key="${args[i]}"
     [ ${ONE_KEYWORD} = 0 ] && echo "${key}:"
     if [ "$REG" = 1 ] ;then
 	${command} -regex ".*/${key}"

@@ -4,15 +4,15 @@ HELP_INFO='This script clean up all the backup files (*~) in current directory.'
 
 rec=0
 
-for ((i = 1;i <= $#;i++)) ;do
-    case ${!i} in
+for ((i = 0;i < ${#args[@]};i++)) ;do
+    case "${args[i]}" in
 	-r)
 	    rec=1
 	    ;;
     esac
 done
 
-if [ $rec = 1 ] ;then
+if [ "$rec" = 1 ] ;then
     find -name "*~" -exec rm {} \;
 else
     find -maxdepth 1 -name "*~" -exec rm {} \;

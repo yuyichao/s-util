@@ -1,23 +1,25 @@
 #!/bin/bash
-function s_shelp()
+s_shelp()
 {
-    echo "This command download a website recursively using wget"
-    echo "USAGE:"
-    echo $'\t'"$0 [OPTIONS] url"
-    echo "OPTIONS:"
-    echo $'\t'"-b/--background: run in the background"
-    echo $'\t'"-v/--version: show the version number and exit"
-    echo $'\t'"-h/--help: show this help and exit"
+    cat<<EOF
+This command download a website recursively using wget
+USAGE:
+	$0 [OPTIONS] url
+OPTIONS:
+	-b/--background: run in the background
+	-v/--version: show the version number and exit
+	-h/--help: show this help and exit
+EOF
 }
 
 . s_init.sh
 
 background=0
-for ((i = 1;i < $#;)) ;do
-    case ${!i} in
+for ((i = 0;i < ${#args[@]};)) ;do
+    case "${args[i]}" in
 	-b|--background)
 	    background=1
-	    shift $i
+	    darg $i
 	    ;;
 	*)
 	    let 'i++'
@@ -25,8 +27,8 @@ for ((i = 1;i < $#;)) ;do
     esac
 done
 if [ $background == 1 ] ;then
-    wget -c -r -np -k -L -p $1 &> $1.log &
+    wget -c -r -np -k -L -p "${args[1]}" &> "${args[1]}".log &
 else
-    wget -c -r -np -k -L -p $1
+    wget -c -r -np -k -L -p "${args[1]}"
 fi
 

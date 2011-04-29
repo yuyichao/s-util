@@ -15,16 +15,16 @@ EOF
 . s_init.sh
 
 if [ $(id -u) != "0" ] ;then
-    sudo $0 -u $(whoami) $@
+    sudo $0 -u $(whoami) "${args[@]}"
     exit
 fi
 
-for ((i = 0;i <= $#;)) ;do
-    case ${!i} in
+for ((i = 0;i < ${#args[@]};)) ;do
+    case "${args[@]}" in
 	-u|--user)
-	    shift $i
-	    S_USERNAME=${!i}
-	    shift $i
+	    darg $i
+	    S_USERNAME="${args[i]}"
+	    darg $i
 	    ;;
 	*)
 	    let 'i++'
@@ -32,7 +32,7 @@ for ((i = 0;i <= $#;)) ;do
 	esac
 done
 
-for arg in $@
+for arg in "${args[@]}"
 do
     cat <<EOF
 [${arg}]

@@ -4,7 +4,7 @@ s_shelp()
     cat <<EOF
 This is a command line clipboard
 USAGE
-	${1} [OPTIONS] FILENAMES
+	$(basename ${0}) [OPTIONS] FILENAMES
 OPTIONS
 	-d: delete from clipboard
 	-p: paste from clipboard

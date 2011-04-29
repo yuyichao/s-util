@@ -1,19 +1,21 @@
 #!/bin/bash
 function s_shelp()
 {
-    echo "This command import the certificate of a given website."
-    echo "USAGE:"
-    echo $'\t'"$0 [OPTIONS] address [port]"
-    echo "OPTIONS"
-    echo $'\t'"-v/--version: show version number and exit"
-    echo $'\t'"-h/--help: show this help and exit"
-    echo "the default port is 443 (https)"
+cat<<EOF
+This command import the certificate of a given website.
+USAGE:
+	$(basename $0) [OPTIONS] address [port]
+OPTIONS
+	-v/--version: show version number and exit
+	-h/--help: show this help and exit
+the default port is 443 (https)
+EOF
 }
 
 . s_init.sh
 
-REMHOST=$1
-REMPORT=${2:-443}
+REMHOST=${args[0]}
+REMPORT=${args[1]:-443}
 openssl s_client -connect "${REMHOST}:${REMPORT}" </dev/null 2>/dev/null | sed -ne '/-BEGIN CERTIFICATE-/,/-END CERTIFICATE-/p' > "$$${REMHOST}:${REMPORT}"
 certutil -d sql:$HOME/.pki/nssdb -A -t TC -n "$REMHOST" -i "$$${REMHOST}:${REMPORT}"
 rm "$$${REMHOST}:${REMPORT}"
