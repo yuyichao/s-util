@@ -57,11 +57,11 @@ else
 fi
 
 if [ ${#args[@]} = "0" ] ;then
-    [[ "${EXTRA}" != "" ]] && {
-	$command | sed -e "${EXTRA}"
-	exit
-    }
-    $command
+    $command | if [[ "${EXTRA}" != "" ]] ;then
+	sed -e "${EXTRA}"
+    else
+	tee
+    fi | sort -u
 fi
 
 ONE_KEYWORD=0
@@ -85,5 +85,5 @@ for ((i = 0;i < ${#args[@]};i++)) ;do
 	grep "${key}"
     else
 	tee
-    fi
+    fi | sort -u
 done
