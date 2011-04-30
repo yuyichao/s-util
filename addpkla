@@ -41,6 +41,6 @@ Action=${arg}
 ResultAny=no
 ResultInactive=no
 ResultActive=yes
-EOF 
+EOF
 >> /etc/polkit-1/localauthority/50-local.d/${arg}.pkla
 done

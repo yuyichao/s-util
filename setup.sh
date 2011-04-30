@@ -34,7 +34,7 @@ __s_del_frm_psbl()
 	for ((i = 0;i < n;i++)) ;do
 	    [[ "${psbl_opt}" == "${possible[i]}" ]] && unset possible[i]
 	done
-	possible=("${possible[@]}")	
+	possible=("${possible[@]}")
     done
 }
 
@@ -87,7 +87,7 @@ __s_util_g_comp()
 
 __s_incld_rdm()
 {
-    [[ "${cur}" == "" ]] && possible=("${possible[@]}" '')    
+    [[ "${cur}" == "" ]] && possible=("${possible[@]}" '')
 }
 
 _clpbd()
