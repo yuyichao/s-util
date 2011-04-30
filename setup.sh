@@ -204,7 +204,7 @@ _dlblk()
     __s_clr_rpt_frm_psbl
 }
 
-reg_complete()
+__reg_complete()
 {
     local complete_list
     complete_list=(addpkla cback cempty clpbd import-cert recget spath spid xopen mitclass dlblk)
@@ -213,4 +213,4 @@ reg_complete()
     done
 }
 
-reg_complete
+__reg_complete
