@@ -20,7 +20,7 @@ change=1
 for ((i = 0;i < ${#args[@]};)) ;do
     case "${args[i]}" in
 	-s|--show)
-	    darg
+	    darg $i
 	    change=0
 	    ;;
 	*)
