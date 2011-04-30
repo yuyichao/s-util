@@ -46,8 +46,7 @@ __s_clr_rpt_frm_psbl()
 	_s_in_array "${COMP_WORDS[i]}" "${possible[@]}" || continue
 	del="${COMP_WORDS[i]}"
 	for ((j = 0;j < ${#pair_opts[@]};j++)) ;do
-	    _s_in_array "${del}" ${pair_opts[j]}
-	    __s_del_frm_psbl ${pair_opts[j]}
+	    _s_in_array "${del}" ${pair_opts[j]} && __s_del_frm_psbl ${pair_opts[j]}
 	done
 	__s_del_frm_psbl ${del}
     done
@@ -137,11 +136,8 @@ _spath()
     s_opts=('-r --reg' '-n --noexec' '-f --full')
     l_opts=('-p --path')
     __s_add_s_opts && {
-	echo "${possible[@]}"
 	__s_incld_rdm
-	echo "${possible[@]}"
 	__s_clr_rpt_frm_psbl
-	echo "${possible[@]}"
 	return 0
     }
     _s_in_array "${prev}" -p --path && {
