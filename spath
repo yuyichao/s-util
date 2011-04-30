@@ -74,8 +74,16 @@ for ((i = 0;i < ${#args[@]};i++)) ;do
     key="${args[i]}"
     [ ${ONE_KEYWORD} = 0 ] && echo "${key}:"
     if [ "$REG" = 1 ] ;then
-	${command} -regex ".*/${key}"
+	${command}
     else
 	${command} -name "${key}"
-    fi | sed -e "${EXTRA}"
+    fi | if [[ "${EXTRA}" != "" ]] ;then
+	sed -e "${EXTRA}"
+    else
+	tee
+    fi | if [[ "$REG" = 1 ]] ;then
+	grep "${key}"
+    else
+	tee
+    fi
 done
