@@ -16,38 +16,58 @@ _s_in_array()
     return 1
 }
 
+__s_one_in_array()
+{
+    local i list
+    list=($1)
+    for ((i = 0;i < ${#list[@]};i++)) ;do
+	_s_in_array ${list[i]} "${@:2}" && return 0
+    done
+    return 1
+}
+
+__s_del_frm_psbl()
+{
+    local i n psbl_opt
+    for psbl_opt in "$@" ;do
+	n=${#possible[@]}
+	for ((i = 0;i < n;i++)) ;do
+	    [[ "${psbl_opt}" == "${possible[i]}" ]] && unset possible[i]
+	done
+	possible=("${possible[@]}")	
+    done
+}
+
 __s_clr_rpt_frm_psbl()
 {
-    local i j n
+    local i j n pair_opts=("${l_opts[@]}" "${s_opts[@]}" "${general_opts[@]}") del
     for ((i = 1;i < ${#COMP_WORDS[@]};i++)) ;do
-	if ((i == COMP_CWORD)) ;then
-	    continue
-	fi
-	n=${#possible[@]}
-	for ((j = 0;j < n;j++)) ;do
-	    if [[ "${COMP_WORDS[i]}" == "${possible[j]}" ]] ;then
-		unset possible[j]
-	    fi
+	((i == COMP_CWORD)) && continue
+	_s_in_array "${COMP_WORDS[i]}" "${possible[@]}" || continue
+	del="${COMP_WORDS[i]}"
+	for ((j = 0;j < ${#pair_opts[@]};j++)) ;do
+	    _s_in_array "${del}" ${pair_opts[j]}
+	    __s_del_frm_psbl ${pair_opts[j]}
 	done
-	possible=("${possible[@]}")
+	__s_del_frm_psbl ${del}
     done
 }
 
 _s_util_general_args()
 {
-    local general_args=(-h -v --version --help) i
-    [[ "${COMP_CWORD}" == 1 ]] && possible=("${general_args[@]}")
-    for ((i = 0;i < ${#general_args[@]};i++)) ;do
-	_s_in_array "${general_args[i]}" "${COMP_WORDS[@]:1}" && return 0
+    local general_opts=('-v --version' '-h --help') i
+    [[ "${COMP_CWORD}" == 1 ]] && possible=(${general_opts[@]})
+    __s_clr_rpt_frm_psbl
+    for ((i = 0;i < ${#general_opts[@]};i++)) ;do
+	__s_one_in_array "${general_opts[i]}" "${COMP_WORDS[@]:1}" && return 0
     done
     return 1
 }
 
 __s_add_s_opts()
 {
-    _s_in_array "${prev}" "${l_opts[@]}" || {
-	possible=("${possible[@]}" "${s_opts[@]}" "${l_opts[@]}")
-	__s_clr_rpt_frm_psbl
+    _s_in_array "${prev}" ${l_opts[@]} || {
+	possible=("${possible[@]}" ${s_opts[@]} ${l_opts[@]})
 	return 0
     }
     return 1
@@ -73,10 +93,10 @@ __s_incld_rdm()
 
 _clpbd()
 {
-    local opts fopt
+    local l_opts fopt
     if [ "$COMP_CWORD" == 1 ] ;then
-	opts="-c --copy -d --delete -p --paste"
-	possible=("${possible[@]}" $(compgen -W "${opts}" -- ${cur}))
+	l_opts=('-c --copy' '-d --delete' '-p --paste')
+	possible=("${possible[@]}" $(compgen -W "${l_opts[*]}" -- ${cur}))
 	__s_clr_rpt_frm_psbl
 	return 0
     else
@@ -85,7 +105,7 @@ _clpbd()
 	    -c|--copy)
 		possible=("${possible[@]}" $(compgen -f ${cur}))
 		__s_clr_rpt_frm_psbl
-		compopt -o filenames
+		type compopt &>/dev/null && compopt -o filenames
 		return 0
 		;;
 	    -p|-d|--paste|--delete)
@@ -103,7 +123,7 @@ _clpbd()
 _xopen()
 {
     possible=("${possible[@]}" $(compgen -f ${cur}))
-    compopt -o filenames
+    type compopt &>/dev/null && compopt -o filenames
 }
 
 _spid()
@@ -114,12 +134,16 @@ _spid()
 _spath()
 {
     local s_opts l_opts
-    s_opts=(-r --reg -n --noexec -f --full)
-    l_opts=(-p --path)
-    __s_add_s_opts && __s_incld_rdm && return 0
+    s_opts=('-r --reg' '-n --noexec' '-f --full')
+    l_opts=('-p --path')
+    __s_add_s_opts && {
+	__s_incld_rdm
+	__s_clr_rpt_frm_psbl
+	return 0
+    }
     _s_in_array "${prev}" -p --path && {
 	possible=("${possible[@]}" $(compgen -f ${cur}))
-	compopt -o filenames
+	type compopt &>/dev/null && compopt -o filenames
 	__s_clr_rpt_frm_psbl
 	return 0
     }
@@ -133,9 +157,10 @@ _addpkla()
 _recget()
 {
     local s_opts l_opts
-    s_opts=(-b --background)
+    s_opts=('-b --background')
     l_opts=()
     __s_add_s_opts
+    __s_clr_rpt_frm_psbl
     __s_incld_rdm
 }
 
@@ -147,7 +172,7 @@ _import-cert()
 _cempty()
 {
     possible=("${possible[@]}" $(compgen -f ${cur}))
-    compopt -o filenames
+    type compopt &>/dev/null && compopt -o filenames
     __s_clr_rpt_frm_psbl
     __s_incld_rdm
 }
@@ -158,7 +183,8 @@ _cback()
     s_opts=(-r)
     l_opts=()
     __s_add_s_opts
-    compopt -o filenames
+    type compopt &>/dev/null && compopt -o filenames
+    __s_clr_rpt_frm_psbl
     __s_incld_rdm
 }
 
