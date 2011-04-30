@@ -1,4 +1,5 @@
 S_U_VERSION=0.2.0
+
 darg()
 {
     if [[ $# == 0 ]] ;then
@@ -6,7 +7,7 @@ darg()
     else
 	n=$1
     fi
-    let 'n > 0' || return 1
+    let 'n >= 0' || return 1
     args=("${args[@]:0:n}" "${args[@]:n + 1}")
 }
 

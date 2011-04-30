@@ -57,8 +57,11 @@ else
 fi
 
 if [ ${#args[@]} = "0" ] ;then
-    $command | sed -e "${EXTRA}"
-    exit
+    [[ "${EXTRA}" != "" ]] && {
+	$command | sed -e "${EXTRA}"
+	exit
+    }
+    $command
 fi
 
 ONE_KEYWORD=0

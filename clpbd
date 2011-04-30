@@ -60,21 +60,21 @@ __delete()
     done
 }
 
-case "$1" in
+case "${args[0]}" in
     -c|--copy)
-	shift
-	__copy "$@"
+	darg
+	__copy "${args[@]}"
 	;;
     -p|--paste)
-	shift
-	__paste "$@"
+	darg
+	__paste "${args[@]}"
 	;;
     -d|--delete)
-	shift
-	__delete "$@"
+	darg
+	__delete "${args[@]}"
 	;;
     *)
-	echo "Unrecognized option ${1}"
+	echo "Unrecognized option ${args[0]}"
 	exit 1
 	;;
 esac

@@ -82,8 +82,8 @@ __s_util_g_comp()
     prev="${COMP_WORDS[COMP_CWORD - 1]}"
     _s_util_general_args ||
     { type "_${command}" &>/dev/null && "_${command}"; }
-    _s_in_array '' "${possible[@]}" && COMPREPLY=('')
-    COMPREPLY=("${COMPREPLY[@]}" $(compgen -W "${possible[*]}" -- ${cur}))
+    COMPREPLY=($(compgen -W "${possible[*]}" -- ${cur}))
+    _s_in_array '' "${possible[@]}" && let "${#COMPREPLY[@]} > 0" && COMPREPLY=("${COMPREPLY[@]}" '')
 }
 
 __s_incld_rdm()
@@ -137,8 +137,11 @@ _spath()
     s_opts=('-r --reg' '-n --noexec' '-f --full')
     l_opts=('-p --path')
     __s_add_s_opts && {
+	echo "${possible[@]}"
 	__s_incld_rdm
+	echo "${possible[@]}"
 	__s_clr_rpt_frm_psbl
+	echo "${possible[@]}"
 	return 0
     }
     _s_in_array "${prev}" -p --path && {
