@@ -187,10 +187,15 @@ _cback()
     __s_incld_rdm
 }
 
+_mitclass()
+{
+    possible=()
+}
+
 reg_complete()
 {
     local complete_list
-    complete_list=(addpkla cback cempty clpbd import-cert recget spath spid xopen)
+    complete_list=(addpkla cback cempty clpbd import-cert recget spath spid xopen mitclass)
 
     for command in "${complete_list[@]}" ;do
 	complete -F __s_util_g_comp "${command}"
