@@ -16,6 +16,8 @@ for ((i = 0;i < ${#args[@]};)) ;do
     esac
 done
 
+[[ ${#args[@]} == 0 ]] && exit 1
+
 if [[ ${change} == 0 ]] ;then
     grep -n '[[:blank:]][[:blank:]]*$' "${args[@]}"
 else
