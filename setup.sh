@@ -182,6 +182,7 @@ _cback()
     s_opts=(-r)
     l_opts=()
     __s_add_s_opts
+    possible=("${possible[@]}" $(compgen -f ${cur}))
     type compopt &>/dev/null && compopt -o filenames
     __s_clr_rpt_frm_psbl
     __s_incld_rdm
@@ -192,11 +193,21 @@ _mitclass()
     possible=()
 }
 
+_dlblk()
+{
+    local s_opts l_opts
+    s_opts=('-s --show')
+    l_opts=()
+    __s_add_s_opts
+    possible=("${possible[@]}" $(compgen -f ${cur}))
+    type compopt &>/dev/null && compopt -o filenames
+    __s_clr_rpt_frm_psbl
+}
+
 reg_complete()
 {
     local complete_list
-    complete_list=(addpkla cback cempty clpbd import-cert recget spath spid xopen mitclass)
-
+    complete_list=(addpkla cback cempty clpbd import-cert recget spath spid xopen mitclass dlblk)
     for command in "${complete_list[@]}" ;do
 	complete -F __s_util_g_comp "${command}"
     done

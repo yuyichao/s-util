@@ -1,0 +1,40 @@
+#!/bin/bash
+
+s_shelp()
+{
+    cat <<EOF
+This command delete or show the blank at the end of every line of input files.
+USAGE:
+	$(basename $0) [OPTION] files
+OPTIONS:
+	-s/--show: only show the lines, not change anything
+	-v/--version: display version and exit
+	-h/--help: show this help and exit
+EOF
+}
+
+. s_init.sh
+
+change=1
+
+for ((i = 0;i < ${#args[@]};)) ;do
+    case "${args[i]}" in
+	-s|--show)
+	    darg $i
+	    change=0
+	    ;;
+	*)
+	    let 'i++'
+	    ;;
+    esac
+done
+
+[[ ${#args[@]} == 0 ]] && exit 1
+
+if [[ ${change} == 0 ]] ;then
+    grep -n '[[:blank:]][[:blank:]]*$' "${args[@]}"
+else
+    for ((i = 0;i < ${#args[@]};i++)) ;do
+	sed -i "${args[i]}" -e '/[[:blank:]]$/s/[[:blank:]]*$//g'
+    done
+fi
