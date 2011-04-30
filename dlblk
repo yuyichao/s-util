@@ -1,5 +1,18 @@
 #!/bin/bash
 
+s_shelp()
+{
+    cat <<EOF
+This command delete or show the blank at the end of every line of input files.
+USAGE:
+	$(basename $0) [OPTION] files
+OPTIONS:
+	-s/--show: only show the lines, not change anything
+	-v/--version: display version and exit
+	-h/--help: show this help and exit
+EOF
+}
+
 . s_init.sh
 
 change=1
