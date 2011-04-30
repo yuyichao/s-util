@@ -1,5 +1,25 @@
 #!/bin/bash
 
-for file in "$@" ;do
-    grep '[[:blank:]][[:blank:]]*$' ${file}
+. s_init.sh
+
+change=1
+
+for ((i = 0;i < ${#args[@]};)) ;do
+    case "${args[i]}" in
+	-s|--show)
+	    darg
+	    change=0
+	    ;;
+	*)
+	    let 'i++'
+	    ;;
+    esac
 done
+
+if [[ ${change} == 0 ]] ;then
+    grep -n '[[:blank:]][[:blank:]]*$' "${args[@]}"
+else
+    for ((i = 0;i < ${#args[@]};i++)) ;do
+	sed -i "${args[i]}" -e '/[[:blank:]]$/s/[[:blank:]]*$//g'
+    done
+fi
