@@ -1,0 +1,17 @@
+#!/bin/bash
+
+# tool to quickly convert a latex string into pdf
+
+echo "\\documentclass{article}\\pagestyle{empty}\\begin{document}\\[" > tmp137.tex
+
+echo "$1" >> tmp137.tex
+ 
+echo "\\]\\end{document}" >> tmp137.tex
+ 
+pdflatex tmp137.tex && rm *.aux *.log *.synctex.gz *.tex
+
+if [ `uname -r` == "10.7.0" ]; then #mac os x
+    open tmp137.pdf
+else
+    echo "whatis your pdf viewer?"
+fi
