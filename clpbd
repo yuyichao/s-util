@@ -17,7 +17,7 @@ EOF
 
 . s_init.sh
 
-clpdir=~$(logname)/.sutil/_s_clipboard
+eval clpdir=~$(logname)/.sutil/_s_clipboard
 
 [ -d "${clpdir}" ] || mkdir -p -m777 "${clpdir}" || exit 1
 

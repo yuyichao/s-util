@@ -12,7 +12,6 @@ s_uninstall()
     } < s_u_vars.lst
     begin=$(grep -n '^##\^\^' ${S_BASH_RC} |  cut -d: -f1 | head -1)
     end=$(grep -n '^##\$\$' ${S_BASH_RC} |  cut -d: -f1 | head -1)
-    rmdir /tmp/_s_clipboard 2>/dev/null
     if [ "$begin" -lt "$end" ] &> /dev/null ;then
 	mv ${S_BASH_RC} ${S_BASH_RC}~
 	awk "NR < ${begin} || NR > ${end}" < ${S_BASH_RC}~ > ${S_BASH_RC} && rm s_u_vars.lst
@@ -51,8 +50,6 @@ if [ "$S_INSTALL_DIST" = "" ] ;then
 	S_INSTALL_DIST="${HOME}/bin"
     fi
 fi
-
-#[ -d /tmp/_s_clipboard ] || mkdir -m777 /tmp/_s_clipboard
 
 if [ "$S_BASH_RC" = "" ] ;then
     if [[ "$S_INSTALL_DIST" =~ ^${HOME} ]] ;then

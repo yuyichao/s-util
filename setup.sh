@@ -93,7 +93,7 @@ __s_incld_rdm()
 _clpbd()
 {
     local l_opts fopt clpdir
-    clpdir=~$(logname)/.sutil/_s_clipboard
+    eval clpdir=~$(logname)/.sutil/_s_clipboard
     if [ "$COMP_CWORD" == 1 ] ;then
 	l_opts=('-c --copy' '-d --delete' '-p --paste')
 	possible=("${possible[@]}" $(compgen -W "${l_opts[*]}" -- ${cur}))
