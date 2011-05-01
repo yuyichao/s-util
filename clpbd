@@ -19,7 +19,7 @@ EOF
 
 eval clpdir=~$(logname)/.sutil/_s_clipboard
 
-[ -d "${clpdir}" ] || mkdir -p -m777 "${clpdir}" || exit 1
+[ -d "${clpdir}" ] || mkdir -p "${clpdir}" || exit 1
 
 LN="ln"
 CP="cp -i"
