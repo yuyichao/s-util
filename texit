@@ -13,5 +13,5 @@ pdflatex tmp137.tex && rm *.aux *.log *.synctex.gz *.tex
 if [ `uname -r` == "10.7.0" ]; then #mac os x
     open tmp137.pdf
 else
-    echo "whatis your pdf viewer?"
+    open tmp137.pdf
 fi
