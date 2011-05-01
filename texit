@@ -1,0 +1,17 @@
+#!/bin/bash
+
+# tool to quickly convert a latex string into pdf
+
+echo "\\documentclass{article}\\pagestyle{empty}\\begin{document}\\[" > tmp137.tex
+
+echo "$1" >> tmp137.tex
+ 
+echo "\\]\\end{document}" >> tmp137.tex
+ 
+pdflatex tmp137.tex && rm *.aux *.log *.synctex.gz *.tex
+
+if [ $(uname) == "Darwin" ]; then #mac os x
+    open tmp137.pdf
+else
+    xopen tmp137.pdf
+fi
