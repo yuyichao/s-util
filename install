@@ -1,9 +1,16 @@
 #!/bin/bash
+
+if [[ $(id -u) == 0 ]] ;then
+    s_util_dir=/usr/share/sutil
+else
+    s_util_dir=~/.sutil
+fi
+filelst=${s_util_dir}/file.lst
+varlst=${s_util_dir}/vars.lst
+
 s_uninstall()
 {
-    filelst=s_u_install.lst
-    varlst=s_u_install.lst
-    [ -r s_u_install.lst ] && xargs rm < s_u_install.lst &> /dev/null && rm s_u_install.lst
+    [ -r "${filelst}" ] && xargs rm < "${filelst}" &> /dev/null && rm "${filelst}"
     if ! [ -r s_u_vars.lst ] ;then
 	echo "cannot find s_u_vars.lst"
 	exit
@@ -21,6 +28,8 @@ s_uninstall()
 	echo "you may need to clear bashrc manually"
     fi
 }
+
+
 
 for ((i = 1;i <= $#;)) ;do
     case ${!i} in
@@ -71,16 +80,16 @@ for file in $(find ! -regex '\./install' -and ! -name '.*' -and ! -regex '.*/\.[
     if [ "$file" = "setup.sh" ] ;then
 	sed -e "s:@@install_dir:${S_INSTALL_DIST}:g" < "${file}" > ${S_INSTALL_DIST}/setup.sh
 	chmod 644 ${S_INSTALL_DIST}/setup.sh
-	echo "${S_INSTALL_DIST}/setup.sh" >> s_u_install.lst
+	echo "${S_INSTALL_DIST}/setup.sh" >> "${filelst}"
 	continue
     fi
     if [ "$file" = "s_init.sh" ] ;then
 	install -m644 ${file} ${S_INSTALL_DIST}/${file}
-	echo "${S_INSTALL_DIST}/s_init.sh" >> s_u_install.lst
+	echo "${S_INSTALL_DIST}/s_init.sh" >> "${filelst}"
 	continue
     fi
     install -m755 ${file} ${S_INSTALL_DIST}/${file}
-    echo "${S_INSTALL_DIST}/${file}" >> s_u_install.lst
+    echo "${S_INSTALL_DIST}/${file}" >> "${filelst}"
 done
 
 if [ $(tail -n1 ${S_BASH_RC} | wc -l) = 0 ] ;then
