@@ -11,19 +11,19 @@ varlst=${s_util_dir}/vars.lst
 s_uninstall()
 {
     [ -r "${filelst}" ] && xargs rm < "${filelst}" &> /dev/null && rm "${filelst}"
-    if ! [ -r s_u_vars.lst ] ;then
-	echo "cannot find s_u_vars.lst"
+    if ! [ -r "${varlst}" ] ;then
+	echo "cannot find ${varlst}"
 	exit
     fi
     {
 	read S_INSTALL_DIST
 	read S_BASH_RC
-    } < s_u_vars.lst
+    } < "${varlst}"
     begin=$(grep -n '^##\^\^' ${S_BASH_RC} |  cut -d: -f1 | head -1)
     end=$(grep -n '^##\$\$' ${S_BASH_RC} |  cut -d: -f1 | head -1)
     if [ "$begin" -lt "$end" ] &> /dev/null ;then
 	mv ${S_BASH_RC} ${S_BASH_RC}~
-	awk "NR < ${begin} || NR > ${end}" < ${S_BASH_RC}~ > ${S_BASH_RC} && rm s_u_vars.lst
+	awk "NR < ${begin} || NR > ${end}" < ${S_BASH_RC}~ > ${S_BASH_RC} && rm "${varlst}"
     else
 	echo "you may need to clear bashrc manually"
     fi
@@ -72,8 +72,8 @@ fi
 
 rm *.lst &> /dev/null
 
-echo "${S_INSTALL_DIST}" >> s_u_vars.lst
-echo "${S_BASH_RC}" >> s_u_vars.lst
+echo "${S_INSTALL_DIST}" >> "${varlst}"
+echo "${S_BASH_RC}" >> "${varlst}"
 
 for file in $(find ! -regex '\./install' -and ! -name '.*' -and ! -regex '.*/\.[^/]*/.*' -and ! -regex '.*\.lst' -and ! -regex '\./README' -and ! -regex '.*~') ;do
     file=${file#./}
