@@ -1,6 +1,8 @@
 #!/bin/bash
 s_uninstall()
 {
+    filelst=s_u_install.lst
+    varlst=s_u_install.lst
     [ -r s_u_install.lst ] && xargs rm < s_u_install.lst &> /dev/null && rm s_u_install.lst
     if ! [ -r s_u_vars.lst ] ;then
 	echo "cannot find s_u_vars.lst"
