@@ -1,13 +1,20 @@
 #!/bin/bash
 rd_fl_t_ary()
 {
-    file="$1"
-    array="$2"
+    local __file="$1"
+    local __array="$2"
     local IFS=$'\n'
-    eval ${array}=\(\$\(cat "${file}"\)\)
+    eval "${__array}"'=("${'${__array}'[@]}" $(cat '"${__file}"'))'
 }
 
-# maybe, save the list as file in ~/.cliapplist, so user can add their own bookmark
-# I think nowadays people have 'evolved' into pattern-recognizers (we don't memorize stuff anymore, we don't do heavy algebra, etc...)
+cmn_cmd_lst=/usr/share/sutil/cmds.lst
+spc_cmd_lst=~/.sutil/cmds.lst
+usr_cmd_lst=~/.sutil/bkmrk.lst
 
-# Hmmm.. sorry I've forgotten most of the coding stuff already, all of those argv and flags whatever
+cmdlst=()
+
+[ -f "${cmn_cmd_lst}" ] && rd_fl_t_ary ${cmn_cmd_lst} cmdlst
+[ -f "${spc_cmd_lst}" ] && rd_fl_t_ary ${spc_cmd_lst} cmdlst
+[ -f "${usr_cmd_lst}" ] && rd_fl_t_ary ${usr_cmd_lst} cmdlst
+
+# I think nowadays people have 'evolved' into pattern-recognizers (we don't memorize stuff anymore, we don't do heavy algebra, etc...)
