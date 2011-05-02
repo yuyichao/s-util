@@ -70,8 +70,12 @@ if [ "$S_BASH_RC" = "" ] ;then
     fi
 fi
 
-echo "${S_INSTALL_DIST}" >> "${varlst}"
-echo "${S_BASH_RC}" >> "${varlst}"
+cat > "${varlst}" <<EOF
+${S_INSTALL_DIST}
+${S_BASH_RC}
+EOF
+
+s_srcdir="$(basename "${BASH_SOURCE}")"
 
 for file in $(find ! -regex '\./install' -and ! -name '.*' -and ! -regex '.*/\.[^/]*/.*' -and ! -regex '.*\.lst' -and ! -regex '\./README' -and ! -regex '.*~') ;do
     file=${file#./}
