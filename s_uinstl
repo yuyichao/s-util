@@ -1,0 +1,52 @@
+#!/bin/bash
+if [[ $(id -u) == 0 ]] ;then
+    s_util_dir=/usr/share/sutil
+else
+    s_util_dir=~/.sutil
+fi
+filelst=${s_util_dir}/files.lst
+varlst=${s_util_dir}/vars.lst
+cmdlst=${s_util_dir}/cmds.lst
+
+s_uninstall()
+{
+    [ -r "${filelst}" ] && xargs rm < "${filelst}" &> /dev/null && rm "${filelst}"
+    if ! [ -r "${varlst}" ] ;then
+	echo "cannot find ${varlst}"
+	exit
+    fi
+    {
+	read S_INSTALL_DIST
+	read S_BASH_RC
+    } < "${varlst}"
+    begin=$(grep -n '^##\^\^' ${S_BASH_RC} |  cut -d: -f1 | head -1)
+    end=$(grep -n '^##\$\$' ${S_BASH_RC} |  cut -d: -f1 | head -1)
+    if [ "$begin" -lt "$end" ] &> /dev/null ;then
+	mv ${S_BASH_RC} ${S_BASH_RC}~
+	awk "NR < ${begin} || NR > ${end}" < ${S_BASH_RC}~ > ${S_BASH_RC} && rm "${varlst}"
+    else
+	echo "you may need to clear bashrc manually"
+    fi
+    rm "${cmdlst}"
+    rmdir ${s_util_dir} &>/dev/null || true
+}
+
+for ((i = 1;i <= $#;i++)) ;do
+    case ${!i} in
+	-t)
+	    let 'i++'
+	    S_INSTALL_DIST=${!i}
+	    ;;
+	-r)
+	    let 'i++'
+	    S_BASH_RC=${!i}
+	    ;;
+	-u)
+	    s_uninstall
+	    exit
+	    ;;
+	*)
+	    args[${#args[@]}]="$i"
+	    ;;
+    esac
+done

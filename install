@@ -9,29 +9,6 @@ filelst=${s_util_dir}/files.lst
 varlst=${s_util_dir}/vars.lst
 cmdlst=${s_util_dir}/cmds.lst
 
-s_uninstall()
-{
-    [ -r "${filelst}" ] && xargs rm < "${filelst}" &> /dev/null && rm "${filelst}"
-    if ! [ -r "${varlst}" ] ;then
-	echo "cannot find ${varlst}"
-	exit
-    fi
-    {
-	read S_INSTALL_DIST
-	read S_BASH_RC
-    } < "${varlst}"
-    begin=$(grep -n '^##\^\^' ${S_BASH_RC} |  cut -d: -f1 | head -1)
-    end=$(grep -n '^##\$\$' ${S_BASH_RC} |  cut -d: -f1 | head -1)
-    if [ "$begin" -lt "$end" ] &> /dev/null ;then
-	mv ${S_BASH_RC} ${S_BASH_RC}~
-	awk "NR < ${begin} || NR > ${end}" < ${S_BASH_RC}~ > ${S_BASH_RC} && rm "${varlst}"
-    else
-	echo "you may need to clear bashrc manually"
-    fi
-    rm "${cmdlst}"
-    rmdir ${s_util_dir} &>/dev/null || true
-}
-
 for ((i = 1;i <= $#;i++)) ;do
     case ${!i} in
 	-t)
@@ -41,10 +18,6 @@ for ((i = 1;i <= $#;i++)) ;do
 	-r)
 	    let 'i++'
 	    S_BASH_RC=${!i}
-	    ;;
-	-u)
-	    s_uninstall
-	    exit
 	    ;;
 	*)
 	    args[${#args[@]}]="$i"
@@ -77,12 +50,10 @@ EOF
 
 s_srcdir="$(basename "${BASH_SOURCE}")"
 
-ignore=('.*/\..*' '.*\.lst' '\./README' '.*~')
+ignore=("'\./install'" "'.*/\..*'" "'.*\.lst'" "'\./README'" "'.*~'")
 notcmd=('.*\.sh')
 
-find_cmd='find'
-
-for file in $(find ! -regex '\./install' -and ! -name '.*' -and ! -regex '.*/\.[^/]*/.*' -and ! -regex '.*\.lst' -and ! -regex '\./README' -and ! -regex '.*~') ;do
+for file in $(for ((i = 0;i < ${#ignore[@];i++})) ;do ((i == 0)) || echo '-and'; echo '-regex'; echo "${ignore[i]}";done | xargs find ${s_srcdir}) ;do
     file=${file#./}
     if [ "$file" = "setup.sh" ] ;then
 	sed -e "s:@@install_dir:${S_INSTALL_DIST}:g" < "${file}" > ${S_INSTALL_DIST}/setup.sh
