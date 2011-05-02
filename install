@@ -1,44 +1,29 @@
 #!/bin/bash
-s_uninstall()
-{
-    [ -r s_u_install.lst ] && xargs rm < s_u_install.lst &> /dev/null && rm s_u_install.lst
-    if ! [ -r s_u_vars.lst ] ;then
-	echo "cannot find s_u_vars.lst"
-	exit
-    fi
-    {
-	read S_INSTALL_DIST
-	read S_BASH_RC
-    } < s_u_vars.lst
-    begin=$(grep -n '^##\^\^' ${S_BASH_RC} |  cut -d: -f1 | head -1)
-    end=$(grep -n '^##\$\$' ${S_BASH_RC} |  cut -d: -f1 | head -1)
-    if [ "$begin" -lt "$end" ] &> /dev/null ;then
-	mv ${S_BASH_RC} ${S_BASH_RC}~
-	awk "NR < ${begin} || NR > ${end}" < ${S_BASH_RC}~ > ${S_BASH_RC} && rm s_u_vars.lst
-    else
-	echo "you may need to clear bashrc manually"
-    fi
-}
 
-for ((i = 1;i <= $#;)) ;do
+if [[ $(id -u) == 0 ]] ;then
+    s_util_dir=/usr/share/sutil
+else
+    s_util_dir=~/.sutil
+fi
+
+[ -d "${s_util_dir}" ] || mkdir "${s_util_dir}" || exit 1
+
+filelst=${s_util_dir}/files.lst
+varlst=${s_util_dir}/vars.lst
+cmdlst=${s_util_dir}/cmds.lst
+
+for ((i = 1;i <= $#;i++)) ;do
     case ${!i} in
 	-t)
-	    shift $i
+	    let 'i++'
 	    S_INSTALL_DIST=${!i}
-	    shift $i
 	    ;;
 	-r)
-	    shift $i
+	    let 'i++'
 	    S_BASH_RC=${!i}
-	    shift $i
-	    ;;
-	-u)
-	    shift $i
-	    s_uninstall
-	    exit
 	    ;;
 	*)
-	    let 'i++'
+	    args[${#args[@]}]="${!i}"
 	    ;;
     esac
 done
@@ -51,39 +36,51 @@ if [ "$S_INSTALL_DIST" = "" ] ;then
     fi
 fi
 
+[ -d "${S_INSTALL_DIST}" ] || mkdir "${S_INSTALL_DIST}" || exit 1
+
+eval realhome=~$(logname)
+
 if [ "$S_BASH_RC" = "" ] ;then
-    if [[ "$S_INSTALL_DIST" =~ ^${HOME} ]] ;then
-	S_BASH_RC=${HOME}/.bashrc
+    if [[ "$S_INSTALL_DIST" =~ ^${realhome} ]] ;then
+	S_BASH_RC=${realhome}/.bashrc
     else
 	S_BASH_RC=/etc/bash.bashrc
     fi
 fi
 
-rm *.lst &> /dev/null
+cat > "${varlst}" <<EOF
+${S_INSTALL_DIST}
+${S_BASH_RC}
+EOF
 
-echo "${S_INSTALL_DIST}" >> s_u_vars.lst
-echo "${S_BASH_RC}" >> s_u_vars.lst
+s_srcdir="$(dirname "${BASH_SOURCE}")"
 
-for file in $(find ! -regex '\./install' -and ! -name '.*' -and ! -regex '.*/\.[^/]*/.*' -and ! -regex '.*\.lst' -and ! -regex '\./README' -and ! -regex '.*~') ;do
-    file=${file#./}
-    if [ "$file" = "setup.sh" ] ;then
-	sed -e "s:@@install_dir:${S_INSTALL_DIST}:g" < "${file}" > ${S_INSTALL_DIST}/setup.sh
-	chmod 644 ${S_INSTALL_DIST}/setup.sh
-	echo "${S_INSTALL_DIST}/setup.sh" >> s_u_install.lst
+ignore=("'\./install'" "'.*/\..*'" "'.*\.lst'" "'\./README'" "'.*~'")
+notcmd=('\.sh$')
+
+currentdir="$PWD"
+
+cd "${s_srcdir}" || exit 1
+
+cat /dev/null | tee "${filelst}" | tee "${cmdlst}"
+
+for file in $(for ((i = 0;i < ${#ignore[@]};i++)) ;do ((i == 0)) || echo '-and'; echo '! -regex'; echo "${ignore[i]}";done | xargs find -type f) ;do
+    if [[ $file =~ $notcmd ]] ;then
+	install -m644 ${file} ${S_INSTALL_DIST}/${file} &&
+	echo "${S_INSTALL_DIST}/${file}" >> "${filelst}" &&
+	if [[ $file == ./setup.sh ]] ;then
+	    sed -e "s:@@install_dir:${S_INSTALL_DIST}:g" -i "${S_INSTALL_DIST}/${file}"
+	fi || exit 1
 	continue
     fi
-    if [ "$file" = "s_init.sh" ] ;then
-	install -m644 ${file} ${S_INSTALL_DIST}/${file}
-	echo "${S_INSTALL_DIST}/s_init.sh" >> s_u_install.lst
-	continue
-    fi
-    install -m755 ${file} ${S_INSTALL_DIST}/${file}
-    echo "${S_INSTALL_DIST}/${file}" >> s_u_install.lst
+    install -m755 ${file} ${S_INSTALL_DIST}/${file} &&
+    echo "${S_INSTALL_DIST}/${file}" >> "${filelst}" &&
+    basename "${file}" >> ${cmdlst} || exit 1
 done
 
 if [ $(tail -n1 ${S_BASH_RC} | wc -l) = 0 ] ;then
     echo >> ${S_BASH_RC}
-fi
-echo '##^^this part is generate automatically when installing' >> ${S_BASH_RC}
-echo "[ -r ${S_INSTALL_DIST}/setup.sh ] && . ${S_INSTALL_DIST}/setup.sh" >> ${S_BASH_RC}
-echo '##$$end' >> ${S_BASH_RC}
+fi &&
+echo '##^^this part is generate automatically when installing' >> ${S_BASH_RC} &&
+echo "[ -r ${S_INSTALL_DIST}/setup.sh ] && . ${S_INSTALL_DIST}/setup.sh" >> ${S_BASH_RC} &&
+echo '##$$end' >> ${S_BASH_RC} || exit 1

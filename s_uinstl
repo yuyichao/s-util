@@ -1,0 +1,34 @@
+#!/bin/bash
+if [[ $(id -u) == 0 ]] ;then
+    s_util_dir=/usr/share/sutil
+else
+    s_util_dir=~/.sutil
+fi
+filelst=${s_util_dir}/files.lst
+varlst=${s_util_dir}/vars.lst
+cmdlst=${s_util_dir}/cmds.lst
+
+[ -r "${filelst}" ] &&
+xargs rm < "${filelst}"  &&
+rm "${filelst}" || exit 1
+
+[ -r "${varlst}" ] || {
+    echo "error: cannot find ${varlst}"
+    exit
+}
+
+{
+    read S_INSTALL_DIST
+    read S_BASH_RC
+} < "${varlst}" &&
+begin=$(grep -n '^##\^\^' ${S_BASH_RC} |  cut -d: -f1 | head -1) &&
+end=$(grep -n '^##\$\$' ${S_BASH_RC} |  cut -d: -f1 | head -1) &&
+[ "$begin" -lt "$end" ] &&
+mv ${S_BASH_RC} ${S_BASH_RC}~ &&
+awk "NR < ${begin} || NR > ${end}" < ${S_BASH_RC}~ > ${S_BASH_RC} && rm "${varlst}" || {
+echo "you may need to clear bashrc manually"
+exit 1
+}
+
+rm "${cmdlst}" &&
+rmdir ${s_util_dir} &>/dev/null || true
