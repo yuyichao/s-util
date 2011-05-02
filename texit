@@ -2,16 +2,16 @@
 
 # tool to quickly convert a latex string into pdf
 
-echo "\\documentclass{article}\\pagestyle{empty}\\begin{document}\\[" > tmp137.tex
+echo "\\documentclass{article}\\pagestyle{empty}\\begin{document}\\[" > tmp$$.tex
 
-echo "$1" >> tmp137.tex
+echo "$1" >> tmp$$.tex
  
-echo "\\]\\end{document}" >> tmp137.tex
+echo "\\]\\end{document}" >> tmp$$.tex
  
-pdflatex tmp137.tex && rm *.aux *.log *.synctex.gz tmp137.tex
+pdflatex tmp$$.tex && rm *.aux *.log *.synctex.gz tmp$$.tex
 
 if [ $(uname) == "Darwin" ]; then #mac os x
-    open tmp137.pdf
+    open tmp$$.pdf
 else
-    xopen tmp137.pdf
+    xopen tmp$$.pdf
 fi
