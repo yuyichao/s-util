@@ -77,6 +77,9 @@ EOF
 
 s_srcdir="$(basename "${BASH_SOURCE}")"
 
+ignore=('.*/\..*' '.*\.lst' '\./README')
+notcmd=()
+
 for file in $(find ! -regex '\./install' -and ! -name '.*' -and ! -regex '.*/\.[^/]*/.*' -and ! -regex '.*\.lst' -and ! -regex '\./README' -and ! -regex '.*~') ;do
     file=${file#./}
     if [ "$file" = "setup.sh" ] ;then
