@@ -77,8 +77,10 @@ EOF
 
 s_srcdir="$(basename "${BASH_SOURCE}")"
 
-ignore=('.*/\..*' '.*\.lst' '\./README')
-notcmd=()
+ignore=('.*/\..*' '.*\.lst' '\./README' '.*~')
+notcmd=('.*\.sh')
+
+find_cmd='find'
 
 for file in $(find ! -regex '\./install' -and ! -name '.*' -and ! -regex '.*/\.[^/]*/.*' -and ! -regex '.*\.lst' -and ! -regex '\./README' -and ! -regex '.*~') ;do
     file=${file#./}
