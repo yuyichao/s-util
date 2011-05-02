@@ -8,7 +8,7 @@ echo "$1" >> tmp137.tex
  
 echo "\\]\\end{document}" >> tmp137.tex
  
-pdflatex tmp137.tex && rm *.aux *.log *.synctex.gz *.tex
+pdflatex tmp137.tex && rm *.aux *.log *.synctex.gz tmp137.tex
 
 if [ $(uname) == "Darwin" ]; then #mac os x
     open tmp137.pdf
