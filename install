@@ -5,8 +5,9 @@ if [[ $(id -u) == 0 ]] ;then
 else
     s_util_dir=~/.sutil
 fi
-filelst=${s_util_dir}/file.lst
+filelst=${s_util_dir}/files.lst
 varlst=${s_util_dir}/vars.lst
+cmdlst=${s_util_dir}/cmds.lst
 
 s_uninstall()
 {
@@ -27,29 +28,26 @@ s_uninstall()
     else
 	echo "you may need to clear bashrc manually"
     fi
+    rm "${cmdlst}"
+    rmdir ${s_util_dir} &>/dev/null || true
 }
 
-
-
-for ((i = 1;i <= $#;)) ;do
+for ((i = 1;i <= $#;i++)) ;do
     case ${!i} in
 	-t)
-	    shift $i
+	    let 'i++'
 	    S_INSTALL_DIST=${!i}
-	    shift $i
 	    ;;
 	-r)
-	    shift $i
+	    let 'i++'
 	    S_BASH_RC=${!i}
-	    shift $i
 	    ;;
 	-u)
-	    shift $i
 	    s_uninstall
 	    exit
 	    ;;
 	*)
-	    let 'i++'
+	    args[${#args[@]}]="$i"
 	    ;;
     esac
 done
@@ -62,15 +60,15 @@ if [ "$S_INSTALL_DIST" = "" ] ;then
     fi
 fi
 
+eval realhome=~$(logname)
+
 if [ "$S_BASH_RC" = "" ] ;then
-    if [[ "$S_INSTALL_DIST" =~ ^${HOME} ]] ;then
-	S_BASH_RC=${HOME}/.bashrc
+    if [[ "$S_INSTALL_DIST" =~ ^${realhome} ]] ;then
+	S_BASH_RC=${realhome}/.bashrc
     else
 	S_BASH_RC=/etc/bash.bashrc
     fi
 fi
-
-rm *.lst &> /dev/null
 
 echo "${S_INSTALL_DIST}" >> "${varlst}"
 echo "${S_BASH_RC}" >> "${varlst}"
