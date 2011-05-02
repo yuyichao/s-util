@@ -1,3 +1,12 @@
+#!/bin/bash
+rd_fl_t_ary()
+{
+    file="$1"
+    array="$2"
+    local IFS=$'\n'
+    eval ${array}=\(\$\(cat "${file}"\)\)
+}
+
 # maybe, save the list as file in ~/.cliapplist, so user can add their own bookmark
 # I think nowadays people have 'evolved' into pattern-recognizers (we don't memorize stuff anymore, we don't do heavy algebra, etc...)
 
