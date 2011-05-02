@@ -3,4 +3,4 @@ HELP_INFO='This command use xdg-open to open arbitrary file with default program
 
 . s_init.sh
 
-xdg-open $@ </dev/null &>/dev/null
+xdg-open "${args[@]}" </dev/null &>/dev/null
