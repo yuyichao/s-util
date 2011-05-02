@@ -51,28 +51,29 @@ EOF
 s_srcdir="$(basename "${BASH_SOURCE}")"
 
 ignore=("'\./install'" "'.*/\..*'" "'.*\.lst'" "'\./README'" "'.*~'")
-notcmd=('.*\.sh')
+notcmd=('\.sh$')
 
-for file in $(for ((i = 0;i < ${#ignore[@];i++})) ;do ((i == 0)) || echo '-and'; echo '-regex'; echo "${ignore[i]}";done | xargs find ${s_srcdir}) ;do
-    file=${file#./}
-    if [ "$file" = "setup.sh" ] ;then
-	sed -e "s:@@install_dir:${S_INSTALL_DIST}:g" < "${file}" > ${S_INSTALL_DIST}/setup.sh
-	chmod 644 ${S_INSTALL_DIST}/setup.sh
-	echo "${S_INSTALL_DIST}/setup.sh" >> "${filelst}"
+currentdir="$PWD"
+
+cd "${s_srcdir}" || exit 1
+
+for file in $(for ((i = 0;i < ${#ignore[@];i++})) ;do ((i == 0)) || echo '-and'; echo '-regex'; echo "${ignore[i]}";done | xargs find) ;do
+    if [[ $file =~ $notcmd ]] ;then
+	install -m644 ${file} ${S_INSTALL_DIST}/${file} &&
+	echo "${S_INSTALL_DIST}/${file}" >> "${filelst}" &&
+	if [[ $file == ./setup.sh ]] ;then
+	    sed -e "s:@@install_dir:${S_INSTALL_DIST}:g" -i "${S_INSTALL_DIST}/${file}"
+	fi || exit 1
 	continue
     fi
-    if [ "$file" = "s_init.sh" ] ;then
-	install -m644 ${file} ${S_INSTALL_DIST}/${file}
-	echo "${S_INSTALL_DIST}/s_init.sh" >> "${filelst}"
-	continue
-    fi
-    install -m755 ${file} ${S_INSTALL_DIST}/${file}
-    echo "${S_INSTALL_DIST}/${file}" >> "${filelst}"
+    install -m755 ${file} ${S_INSTALL_DIST}/${file} &&
+    echo "${S_INSTALL_DIST}/${file}" >> "${filelst}" &&
+    basename "${file}" >> ${cmdlst} || exit 1
 done
 
 if [ $(tail -n1 ${S_BASH_RC} | wc -l) = 0 ] ;then
     echo >> ${S_BASH_RC}
-fi
-echo '##^^this part is generate automatically when installing' >> ${S_BASH_RC}
-echo "[ -r ${S_INSTALL_DIST}/setup.sh ] && . ${S_INSTALL_DIST}/setup.sh" >> ${S_BASH_RC}
-echo '##$$end' >> ${S_BASH_RC}
+fi &&
+echo '##^^this part is generate automatically when installing' >> ${S_BASH_RC} &&
+echo "[ -r ${S_INSTALL_DIST}/setup.sh ] && . ${S_INSTALL_DIST}/setup.sh" >> ${S_BASH_RC} &&
+echo '##$$end' >> ${S_BASH_RC} || exit 1
