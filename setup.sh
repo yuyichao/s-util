@@ -205,10 +205,26 @@ _dlblk()
     __s_clr_rpt_frm_psbl
 }
 
+_lsutil()
+{
+    local s_opts l_opts
+    l_opts=('-a --add' '-d --delete')
+    __s_add_s_opts && {
+	__s_clr_rpt_frm_psbl
+	return 0
+    }
+    _s_in_array "${prev}" -a --add -d --delete && {
+	possible=("${possible[@]}" $(compgen -c ${cur}))
+	__s_clr_rpt_frm_psbl
+	return 0
+    }
+
+}
+
 __reg_complete()
 {
     local complete_list
-    complete_list=(addpkla cback cempty clpbd import-cert recget spath spid xopen mitclass dlblk)
+    complete_list=(addpkla cback cempty clpbd import-cert recget spath spid xopen mitclass dlblk lsutil)
     for command in "${complete_list[@]}" ;do
 	complete -F __s_util_g_comp "${command}"
     done
