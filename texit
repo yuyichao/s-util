@@ -5,9 +5,9 @@
 echo "\\documentclass{article}\\pagestyle{empty}\\begin{document}\\[" > tmp$$.tex
 
 echo "$1" >> tmp$$.tex
- 
+
 echo "\\]\\end{document}" >> tmp$$.tex
- 
+
 pdflatex tmp$$.tex && rm *.aux *.log *.synctex.gz tmp$$.tex
 
 if [ $(uname) == "Darwin" ]; then #mac os x
