@@ -40,6 +40,8 @@ fi
 
 eval realhome=~$(logname)
 
+realhome=$(cd -P "${realhome}" && pwd) || exit 1
+
 if [ "$S_BASH_RC" = "" ] ;then
     if [[ "$S_INSTALL_DIST" =~ ^${realhome} ]] ;then
 	S_BASH_RC=${realhome}/.bashrc
