@@ -17,4 +17,6 @@ cmdlst=()
 [ -f "${spc_cmd_lst}" ] && rd_fl_t_ary ${spc_cmd_lst} cmdlst
 [ -f "${usr_cmd_lst}" ] && rd_fl_t_ary ${usr_cmd_lst} cmdlst
 
-# I think nowadays people have 'evolved' into pattern-recognizers (we don't memorize stuff anymore, we don't do heavy algebra, etc...)
+for ((i = 0;i < ${#cmdlst[@]};i++)) ;do
+    echo "${cmdlst[@]}"
+done
