@@ -6,7 +6,7 @@ This command search for files in the PATH
 USAGE:
 	$(basename $0) [OPTIONS] [KEYWORDS]
 OPTIONS:
-	-r/--reg: use regular expression
+	-r/--noreg: do not use regular expression
 	-n/--noexec: also search not executable files
 	-p/--path PATH: search PATH instead of default PATH
 	-f/--full: show the full path of the command found
@@ -18,15 +18,15 @@ EOF
 . s_init.sh
 
 NONE_EXEC=0
-REG=0
+REG=1
 FULL_PATH=0
 s_path="${PATH}"
 
 for ((i = 0;i < ${#args[@]};)) ;do
     case "${args[i]}" in
-	-r|--reg)
+	-r|--noreg)
 	    darg $i
-	    REG=1
+	    REG=0
 	    ;;
 	-n|--noexec)
 	    darg $i

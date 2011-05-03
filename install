@@ -55,7 +55,7 @@ EOF
 
 s_srcdir="$(dirname "${BASH_SOURCE}")"
 
-ignore=("'\./install'" "'.*/\..*'" "'.*\.lst'" "'\./README'" "'.*~'")
+ignore=("'\./install'" "'.*/\..*'" "'.*\.lst'" "'\./README'" "'.*~'" "'\./tmp'")
 notcmd=('\.sh$')
 
 currentdir="$PWD"

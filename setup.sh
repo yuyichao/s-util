@@ -134,7 +134,7 @@ _spid()
 _spath()
 {
     local s_opts l_opts
-    s_opts=('-r --reg' '-n --noexec' '-f --full')
+    s_opts=('-r --noreg' '-n --noexec' '-f --full')
     l_opts=('-p --path')
     __s_add_s_opts && {
 	__s_incld_rdm
