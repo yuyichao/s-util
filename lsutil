@@ -1,4 +1,19 @@
 #!/bin/bash
+s_shelp()
+{
+    cat<<EOF
+This command list the favorate commands names.
+USAGE:
+	$(basename $0) [OPTIONS] [command]
+OPTIONS:
+	-v/--version: show the version number and exit
+	-h/--help: show this help and exit
+	
+EOF
+}
+
+. s_init.sh
+
 rd_fl_t_ary()
 {
     local __file="$1"
@@ -32,6 +47,40 @@ cmn_cmd_lst=/usr/share/sutil/cmds.lst
 spc_cmd_lst=~/.sutil/cmds.lst
 usr_cmd_lst=~/.sutil/bkmrk.lst
 
+[ -f "${usr_cmd_lst}" ] || touch "${usr_cmd_lst}" || exit 1
+
+for ((i = 0;i < ${#args[@]};)) ;do
+    case "${args[i]}" in
+	-a|--add)
+	    darg $i
+	    [[ ${args[i]} =~ ^! ]] && {
+		echo "command cannot start with !"
+		exit 1
+	    }
+	    if [ $(tail -n1 ${usr_cmd_lst} | wc -l) = 0 ] ;then
+		echo >> ${usr_cmd_lst}
+	    fi &&
+	    echo "${args[i]}" >> ${usr_cmd_lst} || exit 1
+	    exit 0
+	    ;;
+	-d|--delete)
+	    darg $i
+	    [[ ${args[i]} =~ ^! ]] && {
+		echo "command cannot start with !"
+		exit 1
+	    }
+	    if [ $(tail -n1 ${usr_cmd_lst} | wc -l) = 0 ] ;then
+		echo >> ${usr_cmd_lst}
+	    fi &&
+	    echo "!${args[i]}" >> ${usr_cmd_lst} || exit 1
+	    exit 0
+	    ;;
+	*)
+	    let 'i++'
+	    ;;
+    esac
+done
+
 cmdlst=()
 
 [ -f "${cmn_cmd_lst}" ] && rd_fl_t_ary ${cmn_cmd_lst} cmdlst
@@ -49,5 +98,5 @@ for ((i = 0;i < ${#cmdlst[@]};i++)) ;do
 done
 
 for ((i = 0;i < ${#favolst[@]};i++)) ;do
-    echo "${favolst[i]}"
+    echo "${i}: ${favolst[i]}"
 done
