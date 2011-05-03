@@ -1,4 +1,4 @@
-#!/usr/bin/bash
+#!/bin/bash
 
 # online man pages
 curl -s "http://manpages.debian.net/cgi-bin/man.cgi?query=${1}&format=ascii" | less
