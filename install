@@ -28,28 +28,15 @@ for ((i = 1;i <= $#;i++)) ;do
     esac
 done
 
-if [ "$S_INSTALL_DIST" = "" ] ;then
-    if [ "$(id -u)" = "0" ] ;then
-	S_INSTALL_DIST="/usr/bin"
-    else
-	S_INSTALL_DIST="${HOME}/bin"
-    fi
+if [ "$(id -u)" = "0" ] ;then
+    S_INSTALL_DIST=${S_INSTALL_DIST:-"/usr/bin"}
+    S_BASH_RC=${S_BASH_RC:-"/etc/bash.bashrc"}
+else
+    S_INSTALL_DIST=${S_INSTALL_DIST:-"${HOME}/bin"}
+    S_BASH_RC=${S_BASH_RC:-~/.bashrc}
 fi
 
 [ -d "${S_INSTALL_DIST}" ] || mkdir "${S_INSTALL_DIST}" || exit 1
-
-eval realhome=~$(logname)
-
-realhome=$(cd -P "${realhome}" && pwd) || exit 1
-S_INSTALL_DIST=$(cd -P "${S_INSTALL_DIST}" && pwd) || exit 1
-
-if [ "$S_BASH_RC" = "" ] ;then
-    if [[ "$S_INSTALL_DIST" =~ ^${realhome} ]] ;then
-	S_BASH_RC=${realhome}/.bashrc
-    else
-	S_BASH_RC=/etc/bash.bashrc
-    fi
-fi
 
 cat > "${varlst}" <<EOF
 ${S_INSTALL_DIST}
