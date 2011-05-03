@@ -19,12 +19,14 @@ EOF
 __rname()
 {
     type logname &> /dev/null && {
-	logname 2> /dev/null ||
-	whoami
+	logname 2> /dev/null || {
+	    whoami
+	    [[ $(id -u) == 0 ]] && echo "your uid is 0(root) and logname is not available. If you are using sudo to copy files from your home to somewhere else, please use -u/--user to specify the clipboard's owner you want to use" >&2
+	}
     }
 }
 
-eval clpdir=~$(logname)/.sutil/_s_clipboard
+eval clpdir=~$(__rname)/.sutil/_s_clipboard
 
 [ -d "${clpdir}" ] || mkdir -p "${clpdir}" || exit 1
 
@@ -68,22 +70,21 @@ __delete()
     done
 }
 
-case "${args[0]}" in
-    -c|--copy)
-	darg
-	__copy "${args[@]}"
-	;;
-    -p|--paste)
-	darg
-	__paste "${args[@]}"
-	;;
-    -d|--delete)
-	darg
-	__delete "${args[@]}"
-	;;
-    *)
-	echo "Unrecognized option ${args[0]}"
-	exit 1
-	;;
-esac
-exit 0
+action=""
+
+for ((i = 0;i < ${#args[@]};i++)) ;do
+    case "${args[i]}" in
+	-c|--copy)
+	    darg $i
+	    action="copy"
+	    ;;
+	-p|--paste)
+	    darg $i
+	    action="paste"
+	    ;;
+	-d|--delete)
+	    darg $i
+	    action="delete"
+	    ;;
+    esac
+done
