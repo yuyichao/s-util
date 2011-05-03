@@ -4,7 +4,28 @@ rd_fl_t_ary()
     local __file="$1"
     local __array="$2"
     local IFS=$'\n'
-    eval "${__array}"'=("${'${__array}'[@]}" $(cat '"${__file}"'))'
+    eval "${__array}"'=("${'"${__array}"'[@]}" $(cat '"${__file}"'))'
+}
+
+del_frm_ary()
+{
+    local __key="$1"
+    local __array="$2"
+    local __tmp_array
+    eval __tmp_array'=("${'"${__array}"'[@]}")'
+    local __n=${#__tmp_array[@]}
+    local i
+    for ((i = 0;i < __n;i++)) ;do
+	[[ ${__key} == ${__tmp_array[i]} ]] && unset __tmp_array[i]
+    done
+    eval "${__array}"'=("${__tmp_array[@]}")'
+}
+
+apnd_to_ary()
+{
+    local __key="$1"
+    local __array="$2"
+    eval "${__array}"'=("${'"${__array}"'[@]}" '"${__key}"')'
 }
 
 cmn_cmd_lst=/usr/share/sutil/cmds.lst
@@ -17,6 +38,16 @@ cmdlst=()
 [ -f "${spc_cmd_lst}" ] && rd_fl_t_ary ${spc_cmd_lst} cmdlst
 [ -f "${usr_cmd_lst}" ] && rd_fl_t_ary ${usr_cmd_lst} cmdlst
 
+favolst=()
+
 for ((i = 0;i < ${#cmdlst[@]};i++)) ;do
-    echo "${cmdlst[@]}"
+    if [[ ${cmdlst[i]} =~ ^! ]] ;then
+	del_frm_ary "${cmdlst[i]#!}" favolst
+    else
+	apnd_to_ary "${cmdlst[i]}" favolst
+    fi
+done
+
+for ((i = 0;i < ${#favolst[@]};i++)) ;do
+    echo "${favolst[i]}"
 done
