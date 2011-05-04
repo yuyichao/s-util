@@ -115,7 +115,7 @@ _clpbd()
 		;;
 	esac
     done
-    [[ $usrhome =~ ^~ ]] && return
+    { [[ $usrhome =~ ^~ ]] || [[ $usrhome == / ]] ; } && return
     clpdir=${usrhome}/.sutil/_s_clipboard
     if [[ ${cur} =~ ^- ]] || { [[ $cur == "" ]] && [[ $action == "" ]]; } ;then
 	if [[ $action == "" ]] ;then
