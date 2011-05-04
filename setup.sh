@@ -80,12 +80,7 @@ __s_util_g_comp()
     cur="${COMP_WORDS[COMP_CWORD]}"
     prev="${COMP_WORDS[COMP_CWORD - 1]}"
     _s_util_general_args ||
-    { type "_${command}" &>/dev/null && "_${command}"; } 2>&1 | if [ -d ~/.sutil/ ] ;then
-	{
-	    echo -n "${command}: "
-	    cat
-	} >> ~/.sutil/
-    fi
+    { type "_${command}" &>/dev/null && "_${command}"; } &>/dev/null
     COMPREPLY=($(compgen -W "${possible[*]}" -- ${cur}))
     _s_in_array '' "${possible[@]}" && let "${#COMPREPLY[@]} > 0" && COMPREPLY=("${COMPREPLY[@]}" '')
 }
@@ -98,7 +93,7 @@ __s_incld_rdm()
 _clpbd()
 {
     local l_opts fopt clpdir
-    eval clpdir=~/.sutil/_s_clipboard
+    clpdir=~/.sutil/_s_clipboard
     if [ "$COMP_CWORD" == 1 ] ;then
 	l_opts=('-c --copy' '-d --delete' '-p --paste')
 	possible=("${possible[@]}" $(compgen -W "${l_opts[*]}" -- ${cur}))
