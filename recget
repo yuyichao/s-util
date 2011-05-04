@@ -4,7 +4,7 @@ s_shelp()
     cat<<EOF
 This command download a website recursively using wget
 USAGE:
-	$0 [OPTIONS] url
+	$(basename $0) [OPTIONS] url
 OPTIONS:
 	-b/--background: run in the background
 	-v/--version: show the version number and exit
