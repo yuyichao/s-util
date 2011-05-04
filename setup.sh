@@ -144,7 +144,7 @@ _clpbd()
 		type compopt &>/dev/null && compopt -o filenames
 		return 0
 		;;
-	    -paste|delete)
+	    paste|delete)
 		possible=("${possible[@]}" $(cd "${clpdir}" 2> /dev/null && compgen -f ${cur}))
 		__s_clr_rpt_frm_psbl
 		return 0
