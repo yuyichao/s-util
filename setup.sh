@@ -55,7 +55,7 @@ __s_clr_rpt_frm_psbl()
 _s_util_general_args()
 {
     local general_opts=('-v --version' '-h --help') i
-    [[ "${COMP_CWORD}" == 1 ]] && possible=(${general_opts[@]})
+    [[ ${COMP_CWORD} == 1 ]] && [[ ${cur} =~ ^- ]] && possible=(${general_opts[@]})
     __s_clr_rpt_frm_psbl
     for ((i = 0;i < ${#general_opts[@]};i++)) ;do
 	__s_one_in_array "${general_opts[i]}" "${COMP_WORDS[@]:1}" && return 0
