@@ -12,12 +12,66 @@ OPTIONS
 	-v/--version: show the version number and exit
 	-h/--help: show this help and exit
 EOF
-
 }
 
 . s_init.sh
 
-eval clpdir=~$(logname)/.sutil/_s_clipboard
+__rname()
+{
+    type logname &> /dev/null && {
+	logname 2> /dev/null || {
+	    whoami
+	    [[ $(id -u) == 0 ]] && echo "your uid is 0(root) and logname is not available. If you are using sudo to copy files from your home to somewhere else, please use -u/--user to specify the clipboard's owner you want to use" >&2
+	}
+    }
+}
+
+action=""
+
+for ((i = 0;i < ${#args[@]};)) ;do
+    case "${args[i]}" in
+	-c|--copy)
+	    darg $i
+	    [[ $action != "" ]] && [[ $action != copy ]] && {
+		echo "Only one action can be done." >&2
+		exit 1
+	    }
+	    action="copy"
+	    ;;
+	-p|--paste)
+	    darg $i
+	    [[ $action != "" ]] && [[ $action != copy ]] && {
+		echo "Only one action can be done." >&2
+		exit 1
+	    }
+	    action="paste"
+	    ;;
+	-d|--delete)
+	    darg $i
+	    [[ $action != "" ]] && [[ $action != copy ]] && {
+		echo "Only one action can be done." >&2
+		exit 1
+	    }
+	    action="delete"
+	    ;;
+	-u|--user)
+	    darg $i
+	    eval home=~"${args[i]}"
+	    [[ $home =~ ^~ ]] && {
+		echo "invalid user name ${args[i]}" >&2
+		exit 1
+	    }
+	    darg $i
+	    ;;
+	*)
+	    let 'i++'
+	    ;;
+    esac
+done
+
+[[ $home == "" ]] && eval home=~$(__rname)
+
+clpdir="${home}/.sutil/_s_clipboard"
 
 [ -d "${clpdir}" ] || mkdir -p "${clpdir}" || exit 1
 
@@ -61,22 +115,9 @@ __delete()
     done
 }
 
-case "${args[0]}" in
-    -c|--copy)
-	darg
-	__copy "${args[@]}"
-	;;
-    -p|--paste)
-	darg
-	__paste "${args[@]}"
-	;;
-    -d|--delete)
-	darg
-	__delete "${args[@]}"
-	;;
-    *)
-	echo "Unrecognized option ${args[0]}"
-	exit 1
-	;;
-esac
-exit 0
+[[ $action == "" ]] && {
+    echo "There is nothing to do"
+    exit 1
+}
+
+__${action} "${args[@]}"

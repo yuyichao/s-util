@@ -2,9 +2,9 @@
 s_shelp()
 {
     cat <<EOF
-This command add a permission of a certain action to polkit
+This command add a permission of a certain action to polkit. It will automatically call sudo.
 USAGE:
-	$0 [OPTIONS] policies
+	$(basename $0) [OPTIONS] policies
 OPTIONS:
 	-u/--user USER: to add a permission for USER
 	-v/--version: show the version number

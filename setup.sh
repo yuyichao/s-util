@@ -80,7 +80,7 @@ __s_util_g_comp()
     cur="${COMP_WORDS[COMP_CWORD]}"
     prev="${COMP_WORDS[COMP_CWORD - 1]}"
     _s_util_general_args ||
-    { type "_${command}" &>/dev/null && "_${command}"; }
+    { type "_${command}" &>/dev/null && "_${command}"; } &>/dev/null
     COMPREPLY=($(compgen -W "${possible[*]}" -- ${cur}))
     _s_in_array '' "${possible[@]}" && let "${#COMPREPLY[@]} > 0" && COMPREPLY=("${COMPREPLY[@]}" '')
 }
@@ -92,23 +92,49 @@ __s_incld_rdm()
 
 _clpbd()
 {
-    local l_opts fopt clpdir
-    eval clpdir=~$(logname)/.sutil/_s_clipboard
-    if [ "$COMP_CWORD" == 1 ] ;then
-	l_opts=('-c --copy' '-d --delete' '-p --paste')
+    local l_opts clpdir
+    if [[ $prev == -u ]] || [[ $prev == --user ]] ;then
+	possible=("${possible[@]}" $(compgen -u "${cur}"))
+	return 0
+    fi
+    local usrhome=~ action
+    for ((i = 1;i < ${#COMP_WORDS[@]};i++)) ;do
+	((i == COMP_CWORD)) && continue
+	case "${COMP_WORDS[i]}" in
+	    -u|--user)
+		eval usrhome=~"${COMP_WORDS[i+1]}"
+		;;
+	    -c|--copy)
+		action="copy"
+		;;
+	    -d|--delete)
+		action="delete"
+		;;
+	    -p|--paste)
+		action="paste"
+		;;
+	esac
+    done
+    [[ $usrhome =~ ^~ ]] && return
+    clpdir=${usrhome}/.sutil/_s_clipboard
+    if [[ ${cur} =~ ^- ]] || { [[ $cur == "" ]] && [[ $action == "" ]]; } ;then
+	if [[ $action == "" ]] ;then
+	    l_opts=('-c --copy' '-d --delete' '-p --paste' '-u --user')
+	else
+	    l_opts=('-u --user')
+	fi
 	possible=("${possible[@]}" $(compgen -W "${l_opts[*]}" -- ${cur}))
 	__s_clr_rpt_frm_psbl
 	return 0
     else
-	fopt="${COMP_WORDS[1]}"
-	case "${fopt}" in
-	    -c|--copy)
+	case "${action}" in
+	    copy)
 		possible=("${possible[@]}" $(compgen -f ${cur}))
 		__s_clr_rpt_frm_psbl
 		type compopt &>/dev/null && compopt -o filenames
 		return 0
 		;;
-	    -p|-d|--paste|--delete)
+	    -paste|delete)
 		possible=("${possible[@]}" $(cd "${clpdir}" 2> /dev/null && compgen -f ${cur}))
 		__s_clr_rpt_frm_psbl
 		return 0
