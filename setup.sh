@@ -92,9 +92,14 @@ __s_incld_rdm()
 
 _clpbd()
 {
-    local l_opts clpdir
+    local l_opts clpdir i
     if [[ $prev == -u ]] || [[ $prev == --user ]] ;then
-	possible=("${possible[@]}" $(compgen -u "${cur}"))
+	local usrlst=($(compgen -u "${cur}")) homeof
+	for ((i = 0;i < ${#usrlst[@]};i++)) ;do
+	    eval homeof=~${usrlst[i]}
+	    { [[ $homeof =~ ^~ ]] || [[ $homeof == / ]]; } && unset usrlst[i]
+	done
+	possible=("${possible[@]}" "${usrlst[@]}")
 	return 0
     fi
     local usrhome=~ action
