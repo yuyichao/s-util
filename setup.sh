@@ -94,10 +94,15 @@ _clpbd()
 {
     local l_opts clpdir i
     if [[ $prev == -u ]] || [[ $prev == --user ]] ;then
-	local usrlst=($(compgen -u "${cur}")) homeof
-	for ((i = 0;i < ${#usrlst[@]};i++)) ;do
+	local usrlst=($(compgen -u "${cur}")) homeof n
+	n=${#usrlst[@]}
+	for ((i = 0;i < n;i++)) ;do
 	    eval homeof=~${usrlst[i]}
-	    { [[ $homeof =~ ^~ ]] || [[ $homeof == / ]]; } && unset usrlst[i]
+	    case ${homeof}/ in
+		~*|//|/var/*|/srv/*|/bin/*|/sbin/*|/proc/*)
+		    unset usrlst[i]
+		    ;;
+	    esac
 	done
 	possible=("${possible[@]}" "${usrlst[@]}")
 	return 0

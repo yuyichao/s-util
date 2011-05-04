@@ -57,10 +57,12 @@ for ((i = 0;i < ${#args[@]};)) ;do
 	-u|--user)
 	    darg $i
 	    eval home=~"${args[i]}"
-	    { [[ $home =~ ^~ ]] || [[ $home == / ]]; } && {
-		echo "not a common user name: ${args[i]}" >&2
-		exit 1
-	    }
+	    case ${home}/ in
+		~*|//|/var/*|/srv/*|/bin/*|/sbin/*|/proc/*)
+		    echo "not a common user name: ${args[i]}" >&2
+		    exit 1
+		    ;;
+	    esac
 	    darg $i
 	    ;;
 	*)
