@@ -26,7 +26,52 @@ __rname()
     }
 }
 
-eval clpdir=~$(__rname)/.sutil/_s_clipboard
+action=""
+
+for ((i = 0;i < ${#args[@]};)) ;do
+    case "${args[i]}" in
+	-c|--copy)
+	    darg $i
+	    [[ $action != "" ]] && [[ $action != copy ]] && {
+		echo "Only one action can be done." >&2
+		exit 1
+	    }
+	    action="copy"
+	    ;;
+	-p|--paste)
+	    darg $i
+	    [[ $action != "" ]] && [[ $action != copy ]] && {
+		echo "Only one action can be done." >&2
+		exit 1
+	    }
+	    action="paste"
+	    ;;
+	-d|--delete)
+	    darg $i
+	    [[ $action != "" ]] && [[ $action != copy ]] && {
+		echo "Only one action can be done." >&2
+		exit 1
+	    }
+	    action="delete"
+	    ;;
+	-u|--user)
+	    darg $i
+	    eval home=~"${args[i]}"
+	    [[ $home =~ ^~ ]] && {
+		echo "invalid user name ${args[i]}" >&2
+		exit 1
+	    }
+	    darg $i
+	    ;;
+	*)
+	    let 'i++'
+	    ;;
+    esac
+done
+
+[[ $home == "" ]] && eval home=~$(__rname)
+
+clpdir="${home}/.sutil/_s_clipboard"
 
 [ -d "${clpdir}" ] || mkdir -p "${clpdir}" || exit 1
 
@@ -70,21 +115,3 @@ __delete()
     done
 }
 
-action=""
-
-for ((i = 0;i < ${#args[@]};i++)) ;do
-    case "${args[i]}" in
-	-c|--copy)
-	    darg $i
-	    action="copy"
-	    ;;
-	-p|--paste)
-	    darg $i
-	    action="paste"
-	    ;;
-	-d|--delete)
-	    darg $i
-	    action="delete"
-	    ;;
-    esac
-done
