@@ -115,3 +115,9 @@ __delete()
     done
 }
 
+[[ $action == "" ]] && {
+    echo "There is nothing to do"
+    exit 1
+}
+
+__${action} "${args[@]}"
