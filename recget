@@ -27,7 +27,7 @@ for ((i = 0;i < ${#args[@]};)) ;do
     esac
 done
 if [ $background == 1 ] ;then
-    wget -c -r -np -k -L -p "${args[0]}" &> "${args[0]}".log &
+    wget -c -r -np -k -L -p "${args[0]}" &> "$(echo ${args[0]} | tr '/' '_')".log &
 else
     wget -c -r -np -k -L -p "${args[0]}"
 fi
