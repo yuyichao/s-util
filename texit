@@ -4,8 +4,12 @@
 
 echo "\\documentclass{article}\\pagestyle{empty}\\usepackage{feyn}\\begin{document}\\[" > tmp$$.tex
 
-#echo "$1" >> tmp$$.tex
-cat >> tmp$$.tex
+if [ $# == 1 ]; then
+    echo $1 >> tmp$$.tex
+else
+    cat >> tmp$$.tex
+fi
+
 
 echo "\\]\\end{document}" >> tmp$$.tex
 
