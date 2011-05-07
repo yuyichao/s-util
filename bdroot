@@ -1,0 +1,18 @@
+#!/bin/bash
+
+. s_init.sh
+
+nroot="${args[0]}"
+
+[[ $nroot == '' ]] && {
+    echo "Need a path to chroot to."
+    exit 1
+}
+[[ $nroot =~ ^/*$ ]] && {
+    echo "Cannot change root to current root."
+    exit 1
+}
+[[ ! -d $nroot ]] && {
+    echo "${nroot} doesn't exist"
+    exit 1
+}
