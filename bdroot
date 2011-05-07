@@ -16,3 +16,16 @@ nroot="${args[0]}"
     echo "${nroot} doesn't exist"
     exit 1
 }
+sub_dirs=(dev proc sys dev/pts dev/shm)
+for ((i = 0;i < ${#sub_dirs[@]};i++)) ;do
+    [[ -d ${dir}/${sub_dirs[i]} ]] ||
+    mkdir ${dir}/${sub_dirs[i]} ||
+    exit 1
+done
+for ((i = 0;i < ${#sub_dirs[@]};i++)) ;do
+    mount --bind /"${sub_dirs[i]}" "${dir}/${subdirs[i]}" || break
+done
+(( i >= ${#sub_dirs[@]} )) && exit 0
+for ((;i >= 0;i--)) ;do
+    umount "${dir}/${sub_dirs[i]}"
+done
