@@ -1,5 +1,16 @@
 #!/bin/bash
 
+mdrc()
+{
+    local S_BASH_RC="$1" S_INSTALL_DIST="$2"
+    if [ $(tail -n1 ${S_BASH_RC} | wc -l) = 0 ] ;then
+	echo >> ${S_BASH_RC}
+    fi &&
+    echo '##^^this part is generate automatically when installing' >> ${S_BASH_RC} &&
+    echo "[ -r ${S_INSTALL_DIST}/setup.sh ] && . ${S_INSTALL_DIST}/setup.sh" >> ${S_BASH_RC} &&
+    echo '##$$end' >> ${S_BASH_RC} || exit 1    
+}
+
 if [[ $(id -u) == 0 ]] ;then
     s_util_dir=/usr/share/sutil
 else
@@ -12,15 +23,21 @@ filelst=${s_util_dir}/files.lst
 varlst=${s_util_dir}/vars.lst
 cmdlst=${s_util_dir}/cmds.lst
 
+prefix=""
+
 for ((i = 1;i <= $#;i++)) ;do
     case ${!i} in
-	-t)
+	-t|--to)
 	    let 'i++'
 	    S_INSTALL_DIST=${!i}
 	    ;;
-	-r)
+	-r|--rc)
 	    let 'i++'
 	    S_BASH_RC=${!i}
+	    ;;
+	-p|--prefix)
+	    let 'i++'
+	    prefix=${!i}
 	    ;;
 	*)
 	    args[${#args[@]}]="${!i}"
@@ -68,9 +85,4 @@ for file in $(for ((i = 0;i < ${#ignore[@]};i++)) ;do ((i == 0)) || echo '-and';
     basename "${file}" >> ${cmdlst} || exit 1
 done
 
-if [ $(tail -n1 ${S_BASH_RC} | wc -l) = 0 ] ;then
-    echo >> ${S_BASH_RC}
-fi &&
-echo '##^^this part is generate automatically when installing' >> ${S_BASH_RC} &&
-echo "[ -r ${S_INSTALL_DIST}/setup.sh ] && . ${S_INSTALL_DIST}/setup.sh" >> ${S_BASH_RC} &&
-echo '##$$end' >> ${S_BASH_RC} || exit 1
+mdrc "${S_BASH_RC}" "${S_INSTALL_DIST}"

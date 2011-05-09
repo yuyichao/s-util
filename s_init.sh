@@ -1,4 +1,4 @@
-S_U_VERSION=0.2.0
+S_U_VERSION=0.3.0
 
 darg()
 {
