@@ -1,0 +1,12 @@
+pkgname=s-util
+pkgver=0.3.0
+pkgrel=1
+pkgdesc="Simple utilities"
+arch=('any')
+url="https://github.com/yuyichao/s-util"
+license=('GPL')
+
+package()
+{
+    
+}
