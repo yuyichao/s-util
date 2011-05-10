@@ -1,12 +1,32 @@
 #!/bin/bash
-filelist=$(find -name "*.h" -o -name "*.c" -o -name "*.cpp" -o -iname "makefile" -o -name "*.py" -o -name "*.rb")
-if [ "${filelist}" != "" ] ;then
+
+chs_edtr()
+{
+    local edtrlst=('vim' 'emacs' 'vi' 'nano')
+    [[ ${EDITOR} != "" ]] && {
+	echo $EDITOR
+	return 0
+    }
     type editor &> /dev/null && {
-	EDITOR=editor
+	echo editor
+	return 0
     }
-    [[ $EDITOR == "" ]] && {
-	EDITOR=emacs
-	echo "Please set env EDITOR if you don't want to use emacs as default editor"
+    [[ -z $DISPLAY ]] || {
+	type xdg-open &> /dev/null && {
+	    echo xdg-open
+	    return 0
+	}
     }
-    ${EDITOR} ${filelist} &
+    for edtr in "$"
+}
+
+filelist=$(find -name "*.h" -o -name "*.c" -o -name "*.cpp" -o -iname "makefile" -o -name "*.py" -o -name "*.rb" -o -name "*.js" -o -name "*.ui")
+[[ -z $filelist ]] && {
+    echo "No file found" >&2
+    exit 1
+}
+if [[ -z $DISPLAY ]] ;then
+    
+else
+    
 fi
