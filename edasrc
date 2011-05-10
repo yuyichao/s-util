@@ -23,7 +23,7 @@ chs_edtr()
 	    return 0
 	}
     done
-    echo "Cannot find a editor to use. Please set EDITOR or make a symlink named editor to the editor you want to use in the PATH" >&2
+    echo "Cannot find a editor to use. Please set EDITOR or link editor to the editor you want to use." >&2
     return 1
 }
 

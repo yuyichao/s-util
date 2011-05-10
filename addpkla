@@ -34,7 +34,7 @@ done
 
 for arg in "${args[@]}"
 do
-    cat <<EOF
+    cat >> /etc/polkit-1/localauthority/50-local.d/${arg}.pkla <<EOF
 [${arg}]
 Identity=unix-user:${S_USERNAME}
 Action=${arg}
@@ -42,5 +42,4 @@ ResultAny=no
 ResultInactive=no
 ResultActive=yes
 EOF
->> /etc/polkit-1/localauthority/50-local.d/${arg}.pkla
 done
