@@ -1,5 +1,5 @@
 #!/bin/bash
-filelist=$(find -name "*.h" -o -name "*.c" -o -name "*.cpp" -o -iname "makefile")
+filelist=$(find -name "*.h" -o -name "*.c" -o -name "*.cpp" -o -iname "makefile" -o -name "*.py" -o -name "*.rb")
 if [ "${filelist}" != "" ] ;then
     type editor &> /dev/null && {
 	EDITOR=editor
