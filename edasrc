@@ -2,7 +2,7 @@
 
 chs_edtr()
 {
-    local edtrlst=('vim' 'emacs' 'vi' 'nano')
+    local edtrlst=('vim' 'emacs' 'vi' 'nano') edtr
     [[ ${EDITOR} != "" ]] && {
 	echo $EDITOR
 	return 0
@@ -17,7 +17,14 @@ chs_edtr()
 	    return 0
 	}
     }
-    for edtr in "$"
+    for edtr in ${edtolst[@]} ;do
+	type "${edtr}" &> /dev/null && {
+	    echo ${edtr}
+	    return 0
+	}
+    done
+    echo "Cannot find a editor to use. Please set EDITOR or make a symlink named editor to the editor you want to use in the PATH" >&2
+    return 1
 }
 
 filelist=$(find -name "*.h" -o -name "*.c" -o -name "*.cpp" -o -iname "makefile" -o -name "*.py" -o -name "*.rb" -o -name "*.js" -o -name "*.ui")
@@ -25,8 +32,9 @@ filelist=$(find -name "*.h" -o -name "*.c" -o -name "*.cpp" -o -iname "makefile"
     echo "No file found" >&2
     exit 1
 }
+edtr="$(chs_edtr)" || exit $?
 if [[ -z $DISPLAY ]] ;then
-    
+    ${edtr} ${filelist}
 else
-    
+    ${edtr} ${filelist} &> /dev/null &    
 fi
