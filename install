@@ -1,6 +1,6 @@
 #!/bin/bash
 
-mdrc()
+post_install()
 {
     local S_BASH_RC="$1" S_INSTALL_DIST="$2"
     if [ $(tail -n1 ${S_BASH_RC} | wc -l) = 0 ] ;then
@@ -10,18 +10,6 @@ mdrc()
     echo "[ -r ${S_INSTALL_DIST}/setup.sh ] && . ${S_INSTALL_DIST}/setup.sh" >> ${S_BASH_RC} &&
     echo '##$$end' >> ${S_BASH_RC} || exit 1    
 }
-
-if [[ $(id -u) == 0 ]] ;then
-    s_util_dir=/usr/share/sutil
-else
-    s_util_dir=~/.sutil
-fi
-
-[ -d "${s_util_dir}" ] || mkdir "${s_util_dir}" || exit 1
-
-filelst=${s_util_dir}/files.lst
-varlst=${s_util_dir}/vars.lst
-cmdlst=${s_util_dir}/cmds.lst
 
 prefix=""
 
@@ -39,6 +27,9 @@ for ((i = 1;i <= $#;i++)) ;do
 	    let 'i++'
 	    prefix=${!i}
 	    ;;
+	-i|--install-script)
+	    
+	    ;;
 	*)
 	    args[${#args[@]}]="${!i}"
 	    ;;
@@ -53,7 +44,23 @@ else
     S_BASH_RC=${S_BASH_RC:-~/.bashrc}
 fi
 
-[ -d "${S_INSTALL_DIST}" ] || mkdir "${S_INSTALL_DIST}" || exit 1
+if [[ $(id -u) == 0 ]] ;then
+    s_util_dir=/usr/share/sutil
+else
+    s_util_dir=~/.sutil
+fi
+
+[ -d "${s_util_dir}" ] || mkdir -p "${s_util_dir}" || exit 1
+
+s_util_dir="${prefix}/${s_util_dir}"
+S_INSTALL_DIST="${prefix}/${S_INSTALL_DIST}"
+S_BASH_RC="${prefix}/${S_BAHS_RC}"
+
+filelst=${s_util_dir}/files.lst
+varlst=${s_util_dir}/vars.lst
+cmdlst=${s_util_dir}/cmds.lst
+
+[ -d "${S_INSTALL_DIST}" ] || mkdir -p "${S_INSTALL_DIST}" || exit 1
 
 cat > "${varlst}" <<EOF
 ${S_INSTALL_DIST}
@@ -85,4 +92,4 @@ for file in $(for ((i = 0;i < ${#ignore[@]};i++)) ;do ((i == 0)) || echo '-and';
     basename "${file}" >> ${cmdlst} || exit 1
 done
 
-mdrc "${S_BASH_RC}" "${S_INSTALL_DIST}"
+post_install "${S_BASH_RC}" "${S_INSTALL_DIST}"
