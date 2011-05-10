@@ -1,5 +1,12 @@
 #!/bin/bash
 filelist=$(find -name "*.h" -o -name "*.c" -o -name "*.cpp" -o -iname "makefile")
 if [ "${filelist}" != "" ] ;then
-    emacs ${filelist} &
+    type editor &> /dev/null && {
+	EDITOR=editor
+    }
+    [[ $EDITOR == "" ]] && {
+	EDITOR=emacs
+	echo "Please set env EDITOR if you don't want to use emacs as default editor"
+    }
+    ${EDITOR} ${filelist} &
 fi
