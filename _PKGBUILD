@@ -5,6 +5,7 @@ pkgdesc="Simple utilities"
 arch=('any')
 url="https://github.com/yuyichao/s-util"
 license=('GPL')
+depends=('bash' 'coreutils' 'curl' 'util-linux' 'findutils' 'grep' 'awk' 'sed' 'openssl' 'nss' 'wget' 'texlive-bin' 'xdg-utils')
 
 package()
 {
