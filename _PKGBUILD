@@ -24,7 +24,7 @@ package()
 	git clone "$_gitroot"
     fi
 
-    git checkout arch
+    git checkout master
 
     msg "GIT checkout done or server timeout"
 
