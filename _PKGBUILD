@@ -18,7 +18,7 @@ package()
     msg "Connecting to github.com"
 
     if [ -d "$startdir/src/$_gitname" ] ;then
-	cd "$_gitname" && git-pull origin
+	cd "$_gitname" && git pull origin
 	msg "The local files are updated."
     else
 	git clone "$_gitroot"
