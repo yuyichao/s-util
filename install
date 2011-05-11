@@ -98,17 +98,36 @@ cmdlst=${s_util_dir}/cmds.lst
 
 [ -d "${S_INSTALL_DIST}" ] || mkdir -p "${S_INSTALL_DIST}" || exit 1
 
+s_srcdir="$(dirname "${BASH_SOURCE}")"
+currentdir="$PWD"
+
+[[ $mkpkg == 1 ]] && {
+    cp "${s_srcdir}/_PKGBUILD" "${currentdir}/PKGBUILD"
+    cat > "${currentdir}/s-util.install" <<EOF
+post_install()
+{
+$(type post_instl | awk 'NR >= 1')
+post_instl /etc/bash.bashrc /usr/bin
+}
+pre_remove()
+{
+$(type pre_rm | awk 'NR >= 1')
+pre_rm /usr/share/sutil
+}
+EOF
+exit
+}
+
+echo wrong
+exit
+
 cat > "${varlst}" <<EOF
 ${_S_INSTALL_DIST}
 ${_S_BASH_RC}
 EOF
 
-s_srcdir="$(dirname "${BASH_SOURCE}")"
-
 ignore=("'\./install'" "'.*/\..*'" "'.*\.lst'" "'\./README'" "'.*~'" "'\./tmp'")
 notcmd=('\.sh$')
-
-currentdir="$PWD"
 
 cd "${s_srcdir}" || exit 1
 
@@ -149,22 +168,6 @@ rmdir \${s_util_dir} &> /dev/null || true
 rm ${BASH_SOURCE}
 EOF
     chmod 755 "${S_INSTALL_DIST}/s_uinstl"
-}
-
-[[ $mkpkg == 1 ]] && {
-    cp "${s_srcdir}/_PKGBUILD" "${currentdir}/PKGBUILD"
-    cat > "${currentdir}/s-util.install" <<EOF
-post_install()
-{
-$(type post_instl | awk 'NR >= 1')
-post_instl /etc/bash.bashrc /usr/bin
-}
-pre_remove()
-{
-$(type pre_rm | awk 'NR >= 1')
-pre_rm /usr/share/sutil
-}
-EOF
 }
 
 post_instl "${S_BASH_RC}" "${S_INSTALL_DIST}"
