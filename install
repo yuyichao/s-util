@@ -82,8 +82,6 @@ else
     s_util_dir=~/.sutil
 fi
 
-[ -d "${s_util_dir}" ] || mkdir -p "${s_util_dir}" || exit 1
-
 _s_util_dir="${s_util_dir}"
 _S_INSTALL_DIST="${S_INSTALL_DIST}"
 _S_BASH_RC="${S_BASH_RC}"
@@ -91,6 +89,8 @@ _S_BASH_RC="${S_BASH_RC}"
 s_util_dir="${prefix}/${s_util_dir}"
 S_INSTALL_DIST="${prefix}/${S_INSTALL_DIST}"
 S_BASH_RC="${prefix}/${S_BASH_RC}"
+
+[ -d "${s_util_dir}" ] || mkdir -p "${s_util_dir}" || exit 1
 
 filelst=${s_util_dir}/files.lst
 varlst=${s_util_dir}/vars.lst
