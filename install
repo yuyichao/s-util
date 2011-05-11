@@ -59,6 +59,9 @@ for ((i = 1;i <= $#;i++)) ;do
 	--mkpkg)
 	    mkpkg=1
 	    ;;
+	--force-usr)
+	    force_usr=1
+	    ;;
 	*)
 	    args[${#args[@]}]="${!i}"
 	    ;;
@@ -73,7 +76,7 @@ else
     S_BASH_RC=${S_BASH_RC:-~/.bashrc}
 fi
 
-if [[ $(id -u) == 0 ]] ;then
+if [[ $(id -u) == 0 ]] || [[ $force_usr == 1 ]] ;then
     s_util_dir=/usr/share/sutil
 else
     s_util_dir=~/.sutil
@@ -143,6 +146,24 @@ rm "\${filelst}"
 
 rm "\${cmdlst}" "\${varlst}" || true
 rmdir \${s_util_dir} &> /dev/null || true
+rm ${BASH_SOURCE}
+EOF
+    chmod 755 "${S_INSTALL_DIST}/s_uinstl"
+}
+
+[[ $mkpkg == 1 ]] && {
+    cp "${s_srcdir}/_PKGBUILD" "${currentdir}/PKGBUILD"
+    cat > "${currentdir}/s-util.install" <<EOF
+post_install()
+{
+$(type post_instl | awk 'NR >= 1')
+post_instl /etc/bash.bashrc /usr/bin
+}
+pre_remove()
+{
+$(type pre_rm | awk 'NR >= 1')
+pre_rm /usr/share/sutil
+}
 EOF
 }
 
