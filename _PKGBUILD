@@ -1,5 +1,5 @@
 pkgname=s-util-git
-pkgver=0.3.0
+pkgver=20110511
 pkgrel=3
 pkgdesc="Simple utilities"
 arch=('any')
