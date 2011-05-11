@@ -62,6 +62,9 @@ for ((i = 1;i <= $#;i++)) ;do
 	--force-usr)
 	    force_usr=1
 	    ;;
+	--nopstinstl)
+	    nopstinstl=1
+	    ;;
 	*)
 	    args[${#args[@]}]="${!i}"
 	    ;;
@@ -145,7 +148,7 @@ for file in $(for ((i = 0;i < ${#ignore[@]};i++)) ;do ((i == 0)) || echo '-and';
     basename "${file}" >> "${cmdlst}" || exit 1
 done
 
-[[ -z n_uinstl ]] && {
+[[ -z $n_uinstl ]] && {
     cat > "${S_INSTALL_DIST}/s_uinstl" <<EOF
 #!/bin/bash -e
 $(type pre_rm | awk 'NR >= 1')
@@ -170,4 +173,5 @@ EOF
     chmod 755 "${S_INSTALL_DIST}/s_uinstl"
 }
 
+[[ -z $nopstinstl ]] &&
 post_instl "${S_BASH_RC}" "${S_INSTALL_DIST}"
