@@ -25,4 +25,6 @@ if [[ $approx == 0 ]] &&
 else
     sektion=0
 fi
-curl -s "http://manpages.debian.net/cgi-bin/man.cgi?query=${args[0]}&sektion=${sektion}&format=ascii" | less
+for query in "${args[@]}" ;do
+    curl -s "http://manpages.debian.net/cgi-bin/man.cgi?query=${query}&sektion=${sektion}&format=ascii" | less
+done
