@@ -1,6 +1,6 @@
 #!/bin/bash
 
-post_install()
+post_instl()
 {
     local S_BASH_RC="$1" S_INSTALL_DIST="$2"
     if [ $(tail -n1 ${S_BASH_RC} | wc -l) = 0 ] ;then
@@ -9,6 +9,32 @@ post_install()
     echo '##^^this part is generate automatically when installing' >> ${S_BASH_RC} &&
     echo "[ -r ${S_INSTALL_DIST}/setup.sh ] && . ${S_INSTALL_DIST}/setup.sh" >> ${S_BASH_RC} &&
     echo '##$$end' >> ${S_BASH_RC} || exit 1    
+}
+
+pre_rm()
+{
+    local s_util_dir="$1"
+    local varlst=${s_util_dir}/vars.lst
+
+    [ -r "${varlst}" ] || {
+	echo "error: cannot find ${varlst}"
+	exit 1
+    }
+
+    local S_INSTALL_DIST S_BASH_RC
+
+    {
+	read S_INSTALL_DIST
+	read S_BASH_RC
+    } < "${varlst}" &&
+    begin=$(grep -n '^##\^\^' ${S_BASH_RC} |  cut -d: -f1 | head -1) &&
+    end=$(grep -n '^##\$\$' ${S_BASH_RC} |  cut -d: -f1 | head -1) &&
+    [ "$begin" -lt "$end" ] &&
+    mv ${S_BASH_RC} ${S_BASH_RC}~ &&
+    awk "NR < ${begin} || NR > ${end}" < ${S_BASH_RC}~ > ${S_BASH_RC} || {
+	echo "you may need to clear bashrc manually"
+	exit 0
+    }
 }
 
 prefix=""
@@ -27,8 +53,11 @@ for ((i = 1;i <= $#;i++)) ;do
 	    let 'i++'
 	    prefix=${!i}
 	    ;;
-	-i|--install-script)
-	    
+	--no-uninstall)
+	    n_uinstl=1
+	    ;;
+	--mkpkg)
+	    mkpkg=1
 	    ;;
 	*)
 	    args[${#args[@]}]="${!i}"
@@ -52,9 +81,13 @@ fi
 
 [ -d "${s_util_dir}" ] || mkdir -p "${s_util_dir}" || exit 1
 
+_s_util_dir="${s_util_dir}"
+_S_INSTALL_DIST="${S_INSTALL_DIST}"
+_S_BASH_RC="${S_BASH_RC}"
+
 s_util_dir="${prefix}/${s_util_dir}"
 S_INSTALL_DIST="${prefix}/${S_INSTALL_DIST}"
-S_BASH_RC="${prefix}/${S_BAHS_RC}"
+S_BASH_RC="${prefix}/${S_BASH_RC}"
 
 filelst=${s_util_dir}/files.lst
 varlst=${s_util_dir}/vars.lst
@@ -92,4 +125,4 @@ for file in $(for ((i = 0;i < ${#ignore[@]};i++)) ;do ((i == 0)) || echo '-and';
     basename "${file}" >> ${cmdlst} || exit 1
 done
 
-post_install "${S_BASH_RC}" "${S_INSTALL_DIST}"
+post_instl "${S_BASH_RC}" "${S_INSTALL_DIST}"
