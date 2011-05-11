@@ -96,8 +96,8 @@ cmdlst=${s_util_dir}/cmds.lst
 [ -d "${S_INSTALL_DIST}" ] || mkdir -p "${S_INSTALL_DIST}" || exit 1
 
 cat > "${varlst}" <<EOF
-${S_INSTALL_DIST}
-${S_BASH_RC}
+${_S_INSTALL_DIST}
+${_S_BASH_RC}
 EOF
 
 s_srcdir="$(dirname "${BASH_SOURCE}")"
@@ -114,15 +114,36 @@ cat /dev/null | tee "${filelst}" | tee "${cmdlst}"
 for file in $(for ((i = 0;i < ${#ignore[@]};i++)) ;do ((i == 0)) || echo '-and'; echo '! -regex'; echo "${ignore[i]}";done | xargs find -type f) ;do
     if [[ $file =~ $notcmd ]] ;then
 	install -m644 ${file} ${S_INSTALL_DIST}/${file} &&
-	echo "${S_INSTALL_DIST}/${file}" >> "${filelst}" &&
-	if [[ $file == ./setup.sh ]] ;then
-	    sed -e "s:@@install_dir:${S_INSTALL_DIST}:g" -i "${S_INSTALL_DIST}/${file}"
-	fi || exit 1
+	echo "${_S_INSTALL_DIST}/${file}" >> "${filelst}" &&
+	exit 1
 	continue
     fi
     install -m755 ${file} ${S_INSTALL_DIST}/${file} &&
-    echo "${S_INSTALL_DIST}/${file}" >> "${filelst}" &&
-    basename "${file}" >> ${cmdlst} || exit 1
+    echo "${_S_INSTALL_DIST}/${file}" >> "${filelst}" &&
+    basename "${file}" >> "${cmdlst}" || exit 1
 done
+
+[[ -z n_uinstl ]] && {
+    cat > "${S_INSTALL_DIST}/s_uinstl" <<EOF
+#!/bin/bash -e
+$(type pre_rm | awk 'NR >= 1')
+if [[ \$(id -u) == 0 ]] ;then
+    s_util_dir=/usr/share/sutil
+else
+    s_util_dir=~/.sutil
+fi
+pre_rm \${s_util_dir}
+filelst=\${s_util_dir}/files.lst
+varlst=\${s_util_dir}/vars.lst
+cmdlst=\${s_util_dir}/cmds.lst
+
+[ -r "\${filelst}" ]
+xargs rm < "\${filelst}"
+rm "\${filelst}"
+
+rm "\${cmdlst}" "\${varlst}" || true
+rmdir \${s_util_dir} &> /dev/null || true
+EOF
+}
 
 post_instl "${S_BASH_RC}" "${S_INSTALL_DIST}"
