@@ -1,1 +1,2 @@
+#!/bin/bash
 curl http://web.mit.edu/registrar/www/schedules/csbindex.shtml 2>/dev/null | grep -e "$*" | grep -e "L01"
