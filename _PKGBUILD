@@ -10,7 +10,7 @@ depends=('bash' 'coreutils' 'curl' 'util-linux' 'findutils' 'grep' 'awk' 'sed' '
 makedepends=('git')
 
 _gitroot=git://github.com/yuyichao/s-util.git
-_gitname=s-util.git
+_gitname=s-util
 package()
 {
     cd "$srcdir"
