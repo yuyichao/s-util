@@ -1,26 +1,69 @@
 #!/bin/bash
 
-if [[ $(id -u) == 0 ]] ;then
-    s_util_dir=/usr/share/sutil
-else
-    s_util_dir=~/.sutil
-fi
+post_instl()
+{
+    local S_BASH_RC="$1" S_INSTALL_DIST="$2"
+    if [ $(tail -n1 ${S_BASH_RC} | wc -l) = 0 ] ;then
+	echo >> ${S_BASH_RC}
+    fi &&
+    echo '##^^this part is generate automatically when installing' >> ${S_BASH_RC} &&
+    echo "[ -r ${S_INSTALL_DIST}/setup.sh ] && . ${S_INSTALL_DIST}/setup.sh" >> ${S_BASH_RC} &&
+    echo '##$$end' >> ${S_BASH_RC} || exit 1    
+}
 
-[ -d "${s_util_dir}" ] || mkdir "${s_util_dir}" || exit 1
+pre_rm()
+{
+    local s_util_dir="$1"
+    local varlst=${s_util_dir}/vars.lst
 
-filelst=${s_util_dir}/files.lst
-varlst=${s_util_dir}/vars.lst
-cmdlst=${s_util_dir}/cmds.lst
+    [ -r "${varlst}" ] || {
+	echo "error: cannot find ${varlst}"
+	exit 1
+    }
+
+    local S_INSTALL_DIST S_BASH_RC
+
+    {
+	read S_INSTALL_DIST
+	read S_BASH_RC
+    } < "${varlst}" &&
+    begin=$(grep -n '^##\^\^' ${S_BASH_RC} |  cut -d: -f1 | head -1) &&
+    end=$(grep -n '^##\$\$' ${S_BASH_RC} |  cut -d: -f1 | head -1) &&
+    [ "$begin" -lt "$end" ] &&
+    mv ${S_BASH_RC} ${S_BASH_RC}~ &&
+    awk "NR < ${begin} || NR > ${end}" < ${S_BASH_RC}~ > ${S_BASH_RC} || {
+	echo "you may need to clear bashrc manually"
+	exit 0
+    }
+}
+
+prefix=""
 
 for ((i = 1;i <= $#;i++)) ;do
     case ${!i} in
-	-t)
+	-t|--to)
 	    let 'i++'
 	    S_INSTALL_DIST=${!i}
 	    ;;
-	-r)
+	-r|--rc)
 	    let 'i++'
 	    S_BASH_RC=${!i}
+	    ;;
+	-p|--prefix)
+	    let 'i++'
+	    prefix=${!i}
+	    ;;
+	--no-uninstall)
+	    n_uinstl=1
+	    ;;
+	--mkpkg)
+	    mkpkg=1
+	    ;;
+	--force-usr)
+	    force_usr=1
+	    ;;
+	--nopstinstl)
+	    nopstinstl=1
 	    ;;
 	*)
 	    args[${#args[@]}]="${!i}"
@@ -36,19 +79,55 @@ else
     S_BASH_RC=${S_BASH_RC:-~/.bashrc}
 fi
 
-[ -d "${S_INSTALL_DIST}" ] || mkdir "${S_INSTALL_DIST}" || exit 1
+if [[ $(id -u) == 0 ]] || [[ $force_usr == 1 ]] ;then
+    s_util_dir=/usr/share/sutil
+else
+    s_util_dir=~/.sutil
+fi
 
-cat > "${varlst}" <<EOF
-${S_INSTALL_DIST}
-${S_BASH_RC}
-EOF
+_s_util_dir="${s_util_dir}"
+_S_INSTALL_DIST="${S_INSTALL_DIST}"
+_S_BASH_RC="${S_BASH_RC}"
+
+s_util_dir="${prefix}/${s_util_dir}"
+S_INSTALL_DIST="${prefix}/${S_INSTALL_DIST}"
+S_BASH_RC="${prefix}/${S_BASH_RC}"
+
+[ -d "${s_util_dir}" ] || mkdir -p "${s_util_dir}" || exit 1
+
+filelst=${s_util_dir}/files.lst
+varlst=${s_util_dir}/vars.lst
+cmdlst=${s_util_dir}/cmds.lst
+
+[ -d "${S_INSTALL_DIST}" ] || mkdir -p "${S_INSTALL_DIST}" || exit 1
 
 s_srcdir="$(dirname "${BASH_SOURCE}")"
-
-ignore=("'\./install'" "'.*/\..*'" "'.*\.lst'" "'\./README'" "'.*~'" "'\./tmp'")
-notcmd=('\.sh$')
-
 currentdir="$PWD"
+
+[[ $mkpkg == 1 ]] && {
+    cp "${s_srcdir}/_PKGBUILD" "${currentdir}/PKGBUILD"
+    cat > "${currentdir}/s-util.install" <<EOF
+post_install()
+{
+$(type post_instl | awk 'NR > 1')
+post_instl /etc/bash.bashrc /usr/bin
+}
+pre_remove()
+{
+$(type pre_rm | awk 'NR > 1')
+pre_rm /usr/share/sutil
+}
+EOF
+exit
+}
+
+cat > "${varlst}" <<EOF
+${_S_INSTALL_DIST}
+${_S_BASH_RC}
+EOF
+
+ignore=("'\./install'" "'.*/\..*'" "'.*\.lst'" "'\./README'" "'.*~'" "'\./tmp'" "'\./_PKGBUILD'")
+notcmd=('\.sh$')
 
 cd "${s_srcdir}" || exit 1
 
@@ -57,20 +136,39 @@ cat /dev/null | tee "${filelst}" | tee "${cmdlst}"
 for file in $(for ((i = 0;i < ${#ignore[@]};i++)) ;do ((i == 0)) || echo '-and'; echo '! -regex'; echo "${ignore[i]}";done | xargs find -type f) ;do
     if [[ $file =~ $notcmd ]] ;then
 	install -m644 ${file} ${S_INSTALL_DIST}/${file} &&
-	echo "${S_INSTALL_DIST}/${file}" >> "${filelst}" &&
-	if [[ $file == ./setup.sh ]] ;then
-	    sed -e "s:@@install_dir:${S_INSTALL_DIST}:g" -i "${S_INSTALL_DIST}/${file}"
-	fi || exit 1
+	echo "${_S_INSTALL_DIST}/${file}" >> "${filelst}" ||
+	exit 1
 	continue
     fi
     install -m755 ${file} ${S_INSTALL_DIST}/${file} &&
-    echo "${S_INSTALL_DIST}/${file}" >> "${filelst}" &&
-    basename "${file}" >> ${cmdlst} || exit 1
+    echo "${_S_INSTALL_DIST}/${file}" >> "${filelst}" &&
+    basename "${file}" >> "${cmdlst}" || exit 1
 done
 
-if [ $(tail -n1 ${S_BASH_RC} | wc -l) = 0 ] ;then
-    echo >> ${S_BASH_RC}
-fi &&
-echo '##^^this part is generate automatically when installing' >> ${S_BASH_RC} &&
-echo "[ -r ${S_INSTALL_DIST}/setup.sh ] && . ${S_INSTALL_DIST}/setup.sh" >> ${S_BASH_RC} &&
-echo '##$$end' >> ${S_BASH_RC} || exit 1
+[[ -z $n_uinstl ]] && {
+    cat > "${S_INSTALL_DIST}/s_uinstl" <<EOF
+#!/bin/bash -e
+$(type pre_rm | awk 'NR >= 1')
+if [[ \$(id -u) == 0 ]] ;then
+    s_util_dir=/usr/share/sutil
+else
+    s_util_dir=~/.sutil
+fi
+pre_rm \${s_util_dir}
+filelst=\${s_util_dir}/files.lst
+varlst=\${s_util_dir}/vars.lst
+cmdlst=\${s_util_dir}/cmds.lst
+
+[ -r "\${filelst}" ]
+xargs rm < "\${filelst}"
+rm "\${filelst}"
+
+rm "\${cmdlst}" "\${varlst}" || true
+rmdir \${s_util_dir} &> /dev/null || true
+rm ${BASH_SOURCE}
+EOF
+    chmod 755 "${S_INSTALL_DIST}/s_uinstl"
+} || true
+
+[[ -z $nopstinstl ]] &&
+post_instl "${S_BASH_RC}" "${S_INSTALL_DIST}" || true
