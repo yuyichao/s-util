@@ -29,5 +29,5 @@ package()
     msg "GIT checkout done or server timeout"
 
     cd "$srcdir/$_gitname"
-    ./install --to /usr/bin --rc /etc/bash.bashrc --prefix "$pkgdir" --no-uninstall --force-usr
+    ./install --to /usr/bin --rc /etc/bash.bashrc --prefix "$pkgdir" --no-uninstall --force-usr --nopstinstl
 }

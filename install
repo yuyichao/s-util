@@ -71,6 +71,8 @@ for ((i = 1;i <= $#;i++)) ;do
     esac
 done
 
+echo arg
+
 if [ "$(id -u)" = "0" ] ;then
     S_INSTALL_DIST=${S_INSTALL_DIST:-"/usr/bin"}
     S_BASH_RC=${S_BASH_RC:-"/etc/bash.bashrc"}
@@ -121,6 +123,8 @@ EOF
 exit
 }
 
+echo $varlst
+
 cat > "${varlst}" <<EOF
 ${_S_INSTALL_DIST}
 ${_S_BASH_RC}
@@ -136,7 +140,7 @@ cat /dev/null | tee "${filelst}" | tee "${cmdlst}"
 for file in $(for ((i = 0;i < ${#ignore[@]};i++)) ;do ((i == 0)) || echo '-and'; echo '! -regex'; echo "${ignore[i]}";done | xargs find -type f) ;do
     if [[ $file =~ $notcmd ]] ;then
 	install -m644 ${file} ${S_INSTALL_DIST}/${file} &&
-	echo "${_S_INSTALL_DIST}/${file}" >> "${filelst}" &&
+	echo "${_S_INSTALL_DIST}/${file}" >> "${filelst}" ||
 	exit 1
 	continue
     fi
@@ -144,6 +148,8 @@ for file in $(for ((i = 0;i < ${#ignore[@]};i++)) ;do ((i == 0)) || echo '-and';
     echo "${_S_INSTALL_DIST}/${file}" >> "${filelst}" &&
     basename "${file}" >> "${cmdlst}" || exit 1
 done
+
+echo finish
 
 [[ -z $n_uinstl ]] && {
     cat > "${S_INSTALL_DIST}/s_uinstl" <<EOF
