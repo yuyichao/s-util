@@ -71,8 +71,6 @@ for ((i = 1;i <= $#;i++)) ;do
     esac
 done
 
-echo arg
-
 if [ "$(id -u)" = "0" ] ;then
     S_INSTALL_DIST=${S_INSTALL_DIST:-"/usr/bin"}
     S_BASH_RC=${S_BASH_RC:-"/etc/bash.bashrc"}
@@ -123,8 +121,6 @@ EOF
 exit
 }
 
-echo $varlst
-
 cat > "${varlst}" <<EOF
 ${_S_INSTALL_DIST}
 ${_S_BASH_RC}
@@ -149,8 +145,6 @@ for file in $(for ((i = 0;i < ${#ignore[@]};i++)) ;do ((i == 0)) || echo '-and';
     basename "${file}" >> "${cmdlst}" || exit 1
 done
 
-echo finish
-
 [[ -z $n_uinstl ]] && {
     cat > "${S_INSTALL_DIST}/s_uinstl" <<EOF
 #!/bin/bash -e
@@ -174,7 +168,7 @@ rmdir \${s_util_dir} &> /dev/null || true
 rm ${BASH_SOURCE}
 EOF
     chmod 755 "${S_INSTALL_DIST}/s_uinstl"
-}
+} || true
 
 [[ -z $nopstinstl ]] &&
-post_instl "${S_BASH_RC}" "${S_INSTALL_DIST}"
+post_instl "${S_BASH_RC}" "${S_INSTALL_DIST}" || true
