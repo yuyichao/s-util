@@ -126,7 +126,7 @@ ${_S_INSTALL_DIST}
 ${_S_BASH_RC}
 EOF
 
-ignore=("'\./install'" "'.*/\..*'" "'.*\.lst'" "'\./README'" "'.*~'" "'\./tmp'")
+ignore=("'\./install'" "'.*/\..*'" "'.*\.lst'" "'\./README'" "'.*~'" "'\./tmp'" "'\./_PKGBUILD'")
 notcmd=('\.sh$')
 
 cd "${s_srcdir}" || exit 1
