@@ -1,6 +1,6 @@
 pkgname=s-util-git
 pkgver=20110511
-pkgrel=1
+pkgrel=2
 pkgdesc="Simple utilities"
 arch=('any')
 url="https://github.com/yuyichao/s-util"
