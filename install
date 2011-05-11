@@ -121,9 +121,6 @@ EOF
 exit
 }
 
-echo wrong
-exit
-
 cat > "${varlst}" <<EOF
 ${_S_INSTALL_DIST}
 ${_S_BASH_RC}
