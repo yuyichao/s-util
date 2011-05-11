@@ -106,12 +106,12 @@ currentdir="$PWD"
     cat > "${currentdir}/s-util.install" <<EOF
 post_install()
 {
-$(type post_instl | awk 'NR >= 1')
+$(type post_instl | awk 'NR > 1')
 post_instl /etc/bash.bashrc /usr/bin
 }
 pre_remove()
 {
-$(type pre_rm | awk 'NR >= 1')
+$(type pre_rm | awk 'NR > 1')
 pre_rm /usr/share/sutil
 }
 EOF
