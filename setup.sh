@@ -257,10 +257,23 @@ _lsutil()
 
 }
 
+_bdroot()
+{
+    possible=("${possible[@]}" $(compgen -o dirnames ${cur}))
+    type compopt &> /dev/null && compopt -o dirnames
+    return 0
+}
+
+_texit()
+{
+    __s_incld_rdm
+    return 0
+}
+
 __reg_complete()
 {
     local complete_list
-    complete_list=(addpkla cback cempty clpbd import-cert recget spath spid xopen mitclass dlblk lsutil)
+    complete_list=(addpkla bdroot cback cempty clpbd dlblk import-cert lsutil recget spath spid texit xopen mitclass)
     for command in "${complete_list[@]}" ;do
 	complete -F __s_util_g_comp "${command}"
     done
