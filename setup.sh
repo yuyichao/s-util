@@ -1,3 +1,4 @@
+#!/bin/bash
 S_UTIL_INSTALL_DIR="$(dirname "${BASH_SOURCE}")"
 if [[ ":${PATH}:" =~ ":${S_UTIL_INSTALL_DIR}:" ]] ;then
     export PATH=${PATH}
