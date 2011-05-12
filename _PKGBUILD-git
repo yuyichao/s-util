@@ -3,6 +3,7 @@ pkgname=s-util-git
 pkgdesc="Simple utilities"
 arch=('any')
 provides=('s-util')
+conflicts=('s-util')
 replace=('s-util')
 url="https://github.com/yuyichao/s-util"
 license=('GPL')
