@@ -1,19 +1,24 @@
 #!/bin/bash
 
-# tool to quickly convert a latex string into pdf
+HELP_INFO='tool to quickly convert a latex string into pdf'
 
-echo '\documentclass{article}\pagestyle{empty}\usepackage{feyn}\begin{document}\[' > tmp$$.tex
+. s_init.sh
 
-if [ $# == 1 ]; then
-    echo $1 >> tmp$$.tex
-else
-    cat >> tmp$$.tex
-fi
+{
+    echo '\documentclass{article}\pagestyle{empty}\usepackage{feyn}\begin{document}\['
 
+    if [ ${#args[@]} == 1 ]; then
+	echo "${args[0]}"
+    else
+	cat
+    fi
 
-echo '\]\end{document}' >> tmp$$.tex
+    echo '\]\end{document}'
+} > tmp$$.tex
 
+#do you really need a && here, I think it is ok to delete those files even if pdflatex fails
 pdflatex tmp$$.tex && rm tmp$$.{tex,aux,log}
 #,synctex.gz}
 
+#xopen will use open instead of xdg-open on mac
 xopen tmp$$.pdf
