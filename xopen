@@ -3,4 +3,8 @@ HELP_INFO='This command use xdg-open to open arbitrary file with default program
 
 . s_init.sh
 
-xdg-open "${args[@]}" </dev/null &>/dev/null
+if [ $(uname) == "Darwin" ]; then #mac os x
+    open "${args[@]}" < /dev/null &>/dev/null
+else
+    xdg-open "${args[@]}" </dev/null &>/dev/null
+fi

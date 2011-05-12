@@ -2,7 +2,7 @@
 
 # tool to quickly convert a latex string into pdf
 
-echo "\\documentclass{article}\\pagestyle{empty}\\usepackage{feyn}\\begin{document}\\[" > tmp$$.tex
+echo '\documentclass{article}\pagestyle{empty}\usepackage{feyn}\begin{document}\[' > tmp$$.tex
 
 if [ $# == 1 ]; then
     echo $1 >> tmp$$.tex
@@ -11,13 +11,9 @@ else
 fi
 
 
-echo "\\]\\end{document}" >> tmp$$.tex
+echo '\]\end{document}' >> tmp$$.tex
 
 pdflatex tmp$$.tex && rm tmp$$.{tex,aux,log}
 #,synctex.gz}
 
-if [ $(uname) == "Darwin" ]; then #mac os x
-    open tmp$$.pdf
-else
-    xopen tmp$$.pdf
-fi
+xopen tmp$$.pdf
