@@ -180,7 +180,7 @@ done
 [[ -z $n_uinstl ]] && {
     cat > "${S_INSTALL_DIST}/s_uinstl" <<EOF
 #!/bin/bash -e
-$(type pre_rm | awk 'NR >= 1')
+$(type pre_rm | awk 'NR > 1')
 if [[ \$(id -u) == 0 ]] ;then
     s_util_dir=/usr/share/sutil
 else

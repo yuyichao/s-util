@@ -18,22 +18,6 @@ optdepends=('xdg-utils: for using xopen to open any kind of files without annoy 
 
 package()
 {
-    cd "${srcdir}"
-    cd "$srcdir"
-
-    msg "Connecting to github.com"
-
-    if [ -d "$startdir/src/$_gitname" ] ;then
-	cd "$_gitname" && git pull origin
-	msg "The local files are updated."
-    else
-	git clone "$_gitroot"
-    fi
-    msg "GIT checkout done or server timeout"
-
-    cd "$srcdir/$_gitname"
-
-    git checkout master
-
+    cd "${srcdir}/${_fname}"
     ./install --to /usr/bin --rc /etc/bash.bashrc --prefix "$pkgdir" --no-uninstall --force-usr --nopstinstl
 }

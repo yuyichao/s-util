@@ -1,6 +1,6 @@
 #!/bin/bash
 pkgname=s-util-git
-pkgdesc="Simple utilities"
+pkgdesc="Simple utilities, git version"
 arch=('any')
 provides=('s-util')
 conflicts=('s-util')
@@ -18,8 +18,8 @@ optdepends=('xdg-utils: for using xopen to open any kind of files without annoy 
     'util-linux: mount')
 makedepends=('git')
 
-_gitroot=git://github.com/yuyichao/s-util.git
-_gitname=s-util
+_gitroot='git://github.com/yuyichao/s-util.git'
+_gitname='s-util'
 package()
 {
     cd "$srcdir"
