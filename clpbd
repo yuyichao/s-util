@@ -6,9 +6,12 @@ This is a command line clipboard
 USAGE
 	$(basename ${0}) [OPTIONS] FILENAMES
 OPTIONS
-	-d: delete from clipboard
-	-p: paste from clipboard
-	-c: copy files from current dir
+	-d/--delete: delete from clipboard
+	-p/--paste: paste from clipboard
+	-c/--copy: copy files from current dir
+	-x/--cut: cut files from current dir
+	-m/--move: move files from clipboard
+	-u/--user: specify the clipboard owner
 	-v/--version: show the version number and exit
 	-h/--help: show this help and exit
 EOF
