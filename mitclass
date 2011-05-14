@@ -1,2 +1,3 @@
 #!/bin/bash
+#I don't think that curl is available by default in every distro
 curl http://web.mit.edu/registrar/www/schedules/csbindex.shtml 2>/dev/null | grep -e "$*" | grep -e "L01"
