@@ -17,7 +17,8 @@ HELP_INFO='tool to quickly convert a latex string into pdf'
 } > tmp$$.tex
 
 #do you really need a && here, I think it is ok to delete those files even if pdflatex fails
-pdflatex tmp$$.tex && rm tmp$$.{tex,aux,log}
+pdflatex tmp$$.tex
+rm tmp$$.{tex,aux,log}
 #,synctex.gz}
 
 #xopen will use open instead of xdg-open on mac
