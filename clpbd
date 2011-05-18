@@ -96,9 +96,10 @@ clpdir="${home}/.sutil/_s_clipboard"
 
 [ -d "${clpdir}" ] || mkdir -p "${clpdir}" || exit 1
 
-LN="ln"
+LN="ln -s"
 CP="cp -i"
 RM="rm"
+MV="mv"
 
 __copy()
 {
@@ -108,7 +109,14 @@ __copy()
 	else
 	    file="${PWD}/${!i}"
 	fi
-	${LN} -s "${file}" "${clpdir}" || exit 1
+	${LN} "${file}" "${clpdir}" || exit 1
+    done
+}
+
+__move()
+{
+    for ((i = 1;i <= $#;i++)) ;do
+	${MV} "${file}" "${clpdir}" || exit 1
     done
 }
 
@@ -128,14 +136,25 @@ __paste()
     done
 }
 
-__move()
-{
-    
-}
-
 __cut()
 {
-    
+    for ((i = 1;i <= $#;i++)) ;do
+	file="${clpdir}/${!i}"
+	if [[ -L git ]] ;then
+	    if [ -d "${file}" ] ;then
+		${CP} -r "${file}/" . || exit 1
+	    else
+		if [ -f "${file}" ] ;then
+		    ${CP} "${file}" . || exit 1
+		else
+		    exit 1
+		fi
+	    fi
+	    ${RM} "${file}" || exit 1
+	else
+	    ${MV} "$file" || exit 1
+	fi
+    done
 }
 
 __delete()
