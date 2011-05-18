@@ -123,13 +123,19 @@ _clpbd()
 	    -p|--paste)
 		action="paste"
 		;;
+	    -x|--cut)
+		action="cut"
+		;;
+	    -m|--move)
+		action="move"
+		;;
 	esac
     done
     { [[ $usrhome =~ ^~ ]] || [[ $usrhome == / ]] ; } && return
     clpdir=${usrhome}/.sutil/_s_clipboard
     if [[ ${cur} =~ ^- ]] || { [[ $cur == "" ]] && [[ $action == "" ]]; } ;then
 	if [[ $action == "" ]] ;then
-	    l_opts=('-c --copy' '-d --delete' '-p --paste' '-u --user')
+	    l_opts=('-c --copy' '-d --delete' '-p --paste' '-u --user' '-x --cut' '-m --move')
 	else
 	    l_opts=('-u --user')
 	fi
@@ -138,13 +144,13 @@ _clpbd()
 	return 0
     else
 	case "${action}" in
-	    copy)
+	    copy|cut)
 		possible=("${possible[@]}" $(compgen -f ${cur}))
 		__s_clr_rpt_frm_psbl
 		type compopt &>/dev/null && compopt -o filenames
 		return 0
 		;;
-	    paste|delete)
+	    paste|delete|move)
 		possible=("${possible[@]}" $(cd "${clpdir}" 2> /dev/null && compgen -f ${cur}))
 		__s_clr_rpt_frm_psbl
 		return 0

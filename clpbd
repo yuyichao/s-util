@@ -43,7 +43,7 @@ for ((i = 0;i < ${#args[@]};)) ;do
 	    ;;
 	-p|--paste)
 	    darg $i
-	    [[ $action != "" ]] && [[ $action != copy ]] && {
+	    [[ $action != "" ]] && [[ $action != paste ]] && {
 		echo "Only one action can be done." >&2
 		exit 1
 	    }
@@ -51,11 +51,27 @@ for ((i = 0;i < ${#args[@]};)) ;do
 	    ;;
 	-d|--delete)
 	    darg $i
-	    [[ $action != "" ]] && [[ $action != copy ]] && {
+	    [[ $action != "" ]] && [[ $action != delete ]] && {
 		echo "Only one action can be done." >&2
 		exit 1
 	    }
 	    action="delete"
+	    ;;
+	-x|--cut)
+	    darg $i
+	    [[ $action != "" ]] && [[ $action != cut ]] && {
+		echo "Only one action can be done." >&2
+		exit 1
+	    }
+	    action="cut"
+	    ;;
+	-m|--move)
+	    darg $i
+	    [[ $action != "" ]] && [[ $action != move ]] && {
+		echo "Only one action can be done." >&2
+		exit 1
+	    }
+	    action="move"
 	    ;;
 	-u|--user)
 	    darg $i
@@ -110,6 +126,16 @@ __paste()
 	    fi
 	fi
     done
+}
+
+__move()
+{
+    
+}
+
+__cut()
+{
+    
 }
 
 __delete()
