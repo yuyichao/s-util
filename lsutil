@@ -43,9 +43,15 @@ apnd_to_ary()
     eval "${__array}"'=("${'"${__array}"'[@]}" '"${__key}"')'
 }
 
+usr_conf_dir=~/.sutil
 cmn_cmd_lst=/usr/share/sutil/cmds.lst
-spc_cmd_lst=~/.sutil/cmds.lst
-usr_cmd_lst=~/.sutil/bkmrk.lst
+spc_cmd_lst="${usr_conf_dir}/cmds.lst"
+usr_cmd_lst="${usr_conf_dir}/bkmrk.lst"
+
+[ -d "$usr_conf_dir" ] || mkdir "${usr_conf_dir}" || {
+    echo "error: cannot mkdir ${usr_conf_dir}"
+    exit 1
+}
 
 [ -f "${usr_cmd_lst}" ] || touch "${usr_cmd_lst}" || exit 1
 
