@@ -32,7 +32,7 @@ pre_rm()
     [ "$begin" -lt "$end" ] &&
     mv ${S_BASH_RC} ${S_BASH_RC}~ &&
     awk "NR < ${begin} || NR > ${end}" < ${S_BASH_RC}~ > ${S_BASH_RC} || {
-	echo "you may need to clear bashrc manually"
+	echo "warning: you may need to clear bashrc manually" >&2
 	exit 0
     }
 }
@@ -41,6 +41,14 @@ prefix=""
 
 for ((i = 1;i <= $#;i++)) ;do
     case ${!i} in
+	--post_instl)
+	    type post_instl | awk 'NR > 1'
+	    exit 0
+	    ;;
+	--pre_rm)
+	    type pre_rm | awk 'NR > 1'
+	    exit 0
+	    ;;
 	-t|--to)
 	    let 'i++'
 	    S_INSTALL_DIST=${!i}
@@ -56,9 +64,6 @@ for ((i = 1;i <= $#;i++)) ;do
 	--no-uninstall)
 	    n_uinstl=1
 	    ;;
-	--mkpkg)
-	    mkpkg=1
-	    ;;
 	--force-usr)
 	    force_usr=1
 	    ;;
@@ -66,7 +71,8 @@ for ((i = 1;i <= $#;i++)) ;do
 	    nopstinstl=1
 	    ;;
 	*)
-	    args[${#args[@]}]="${!i}"
+	    echo "error: unrecognized argument ${!i}" >&2
+	    exit 1
 	    ;;
     esac
 done
@@ -103,23 +109,6 @@ cmdlst=${s_util_dir}/cmds.lst
 
 s_srcdir="$(dirname "${BASH_SOURCE}")"
 currentdir="$PWD"
-
-[[ $mkpkg == 1 ]] && {
-    cp "${s_srcdir}/_PKGBUILD" "${currentdir}/PKGBUILD"
-    cat > "${currentdir}/s-util.install" <<EOF
-post_install()
-{
-$(type post_instl | awk 'NR > 1')
-post_instl /etc/bash.bashrc /usr/bin
-}
-pre_remove()
-{
-$(type pre_rm | awk 'NR > 1')
-pre_rm /usr/share/sutil
-}
-EOF
-exit
-}
 
 cat > "${varlst}" <<EOF
 ${_S_INSTALL_DIST}
