@@ -64,23 +64,6 @@ for ((i = 1;i <= $#;i++)) ;do
 	--no-uninstall)
 	    n_uinstl=1
 	    ;;
-<<<<<<< HEAD
-=======
-	--mkpkg)
-	    mkpkg=1
-	    let 'i++'
-	    pkgver=${!i}
-	    let 'i++'
-	    pkgrel=${!i}
-	    ;;
-	--mkpkg-git)
-	    mkpkg_git=1
-	    let 'i++'
-	    pkgver=${!i}
-	    let 'i++'
-	    pkgrel=${!i}
-	    ;;
->>>>>>> 7f1523dd7f928cda4f569e8eee77ce039f6ae82a
 	--force-usr)
 	    force_usr=1
 	    ;;
@@ -127,8 +110,6 @@ cmdlst=${s_util_dir}/cmds.lst
 s_srcdir="$(dirname "${BASH_SOURCE}")"
 currentdir="$PWD"
 
-<<<<<<< HEAD
-=======
 _mkinstl()
 {
     local currentdir="$1"
@@ -145,29 +126,6 @@ pre_rm /usr/share/sutil
 }
 EOF
 }
-
-[[ $mkpkg == 1 ]] && {
-    {
-	echo "pkgver=${pkgver}"
-	echo "pkgrel=${pkgrel}"
-	cat
-    } < "${s_srcdir}/_PKGBUILD" > "${currentdir}/PKGBUILD"
-    _mkinstl "${currentdir}"
-    exit
-}
-
-
-[[ $mkpkg_git == 1 ]] && {
-    {
-	echo "pkgver=${pkgver}"
-	echo "pkgrel=${pkgrel}"
-	cat
-    } < "${s_srcdir}/_PKGBUILD-git" > "${currentdir}/PKGBUILD"
-    _mkinstl "${currentdir}"
-    exit
-}
-
->>>>>>> 7f1523dd7f928cda4f569e8eee77ce039f6ae82a
 cat > "${varlst}" <<EOF
 ${_S_INSTALL_DIST}
 ${_S_BASH_RC}
@@ -195,11 +153,7 @@ done
 [[ -z $n_uinstl ]] && {
     cat > "${S_INSTALL_DIST}/s_uinstl" <<EOF
 #!/bin/bash -e
-<<<<<<< HEAD
 $(declare -f pre_rm)
-=======
-$(type pre_rm | awk 'NR > 1')
->>>>>>> 7f1523dd7f928cda4f569e8eee77ce039f6ae82a
 if [[ \$(id -u) == 0 ]] ;then
     s_util_dir=/usr/share/sutil
 else
