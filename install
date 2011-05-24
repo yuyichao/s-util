@@ -110,22 +110,6 @@ cmdlst=${s_util_dir}/cmds.lst
 s_srcdir="$(dirname "${BASH_SOURCE}")"
 currentdir="$PWD"
 
-_mkinstl()
-{
-    local currentdir="$1"
-    cat > "${currentdir}/s-util.install" <<EOF
-post_install()
-{
-$(type post_instl | awk 'NR > 1')
-post_instl /etc/bash.bashrc /usr/bin
-}
-pre_remove()
-{
-$(type pre_rm | awk 'NR > 1')
-pre_rm /usr/share/sutil
-}
-EOF
-}
 cat > "${varlst}" <<EOF
 ${_S_INSTALL_DIST}
 ${_S_BASH_RC}
