@@ -18,8 +18,7 @@ nroot="${args[0]}"
 }
 sub_dirs=(dev proc sys dev/pts dev/shm)
 for ((i = 0;i < ${#sub_dirs[@]};i++)) ;do
-    [[ -d ${dir}/${sub_dirs[i]} ]] ||
-    mkdir ${dir}/${sub_dirs[i]} ||
+    mkdir -p ${dir}/${sub_dirs[i]} ||
     exit 1
 done
 for ((i = 0;i < ${#sub_dirs[@]};i++)) ;do
