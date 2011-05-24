@@ -1,3 +1,4 @@
+#!/bin/bash
 S_U_VERSION=0.3.1
 
 darg()
