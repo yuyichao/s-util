@@ -42,11 +42,11 @@ prefix=""
 for ((i = 1;i <= $#;i++)) ;do
     case ${!i} in
 	--post_instl)
-	    type post_instl | awk 'NR > 1'
+	    declare -f post_instl
 	    exit 0
 	    ;;
 	--pre_rm)
-	    type pre_rm | awk 'NR > 1'
+	    declare -f pre_rm
 	    exit 0
 	    ;;
 	-t|--to)
@@ -137,7 +137,7 @@ done
 [[ -z $n_uinstl ]] && {
     cat > "${S_INSTALL_DIST}/s_uinstl" <<EOF
 #!/bin/bash -e
-$(type pre_rm | awk 'NR >= 1')
+$(declare -f pre_rm)
 if [[ \$(id -u) == 0 ]] ;then
     s_util_dir=/usr/share/sutil
 else
