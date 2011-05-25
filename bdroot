@@ -7,10 +7,18 @@ action=0
 for ((i = 0;i < ${#args[@]};)) ;do
     case "$args[i]" in
 	-n)
+	    [[ $action == 2 ]] && {
+		echo "Only one action can be done." >&2
+		exit 1
+	    }
 	    action=1
 	    dargs $i
 	    ;;
 	-u)
+	    [[ $action == 1 ]] && {
+		echo "Only one action can be done." >&2
+		exit 1
+	    }
 	    action=2
 	    dargs $i
 	    ;;
