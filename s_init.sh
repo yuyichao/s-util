@@ -31,7 +31,7 @@ for ((i = 0;i < ${#args[@]};)) ;do
 	    exit
 	    ;;
 	*)
-	    let 'i++'
+	    let 'i++' || true
 	    ;;
     esac
 done
