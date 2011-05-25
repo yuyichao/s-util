@@ -2,15 +2,20 @@
 
 . s_init.sh
 
-for ((i = 0;i < ${#args[@]};i++)) ;do
+action=0
+
+for ((i = 0;i < ${#args[@]};)) ;do
     case "$args[i]" in
 	-n)
-	    nochroot=1
+	    action=1
 	    dargs $i
 	    ;;
 	-u)
-	    unbind=1
+	    action=2
 	    dargs $i
+	    ;;
+	*)
+	    let 'i++'
 	    ;;
     esac
 done
@@ -25,21 +30,32 @@ nroot="${args[0]}"
     echo "Cannot change root to current root."
     exit 1
 }
+mkdir -p "$nroot"
 [[ ! -d $nroot ]] && {
     echo "${nroot} doesn't exist"
     exit 1
 }
 sub_dirs=(dev proc sys dev/pts dev/shm)
-for ((i = 0;i < ${#sub_dirs[@]};i++)) ;do
-    mkdir -p ${nroot}/${sub_dirs[i]} &&
-    mount --bind /"${sub_dirs[i]}" "${nroot}/${sub_dirs[i]}" || break
-done
-if [[ $nochroot ]] ;then
-    (( i >= ${#sub_dirs[@]} )) && exit 0
-else
-    chroot "${nroot}"
-    ((i--))
+if [[ $action == 0 ]] || [[ $action == 1 ]] ;then
+    for ((i = 0;i < ${#sub_dirs[@]};i++)) ;do
+	mkdir -p ${nroot}/${sub_dirs[i]} &&
+	mount --bind /"${sub_dirs[i]}" "${nroot}/${sub_dirs[i]}" || break
+    done
 fi
+result=0
+case $action in
+    0)
+	(( i >= ${#sub_dirs[@]} )) && {
+	    chroot "${nroot}"
+	    ((i--))
+	}
+	;;
+    1)
+	(( i >= ${#sub_dirs[@]} )) && exit 0
+	result=1
+	;;
+esac
 for ((;i >= 0;i--)) ;do
     umount "${nroot}/${sub_dirs[i]}"
 done
+exit ${result}
