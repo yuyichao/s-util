@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -e
 
 . s_init.sh
 
@@ -36,7 +36,12 @@ for ((i = 0;i < ${#sub_dirs[@]};i++)) ;do
     mkdir -p ${nroot}/${sub_dirs[i]} &&
     mount --bind /"${sub_dirs[i]}" "${nroot}/${sub_dirs[i]}" || break
 done
-(( i >= ${#sub_dirs[@]} )) && exit 0
+if [[ $nochroot ]] ;then
+    (( i >= ${#sub_dirs[@]} )) && exit 0
+else
+    chroot "${nroot}"
+    ((i--))
+fi
 for ((;i >= 0;i--)) ;do
     umount "${nroot}/${sub_dirs[i]}"
 done
