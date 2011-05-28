@@ -272,7 +272,7 @@ _quote()
 _quotes()
 {
     for arg in "$@" ;do
-	_quote "arg"
+	_quote "$arg"
     done
 }
 
