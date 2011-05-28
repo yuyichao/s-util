@@ -20,9 +20,9 @@ _s_in_array()
 __s_one_in_array()
 {
     local i list
-    list=($1)
+    list=("$1")
     for ((i = 0;i < ${#list[@]};i++)) ;do
-	_s_in_array ${list[i]} "${@:2}" && return 0
+	_s_in_array "${list[i]}" "${@:2}" && return 0
     done
     return 1
 }
@@ -49,14 +49,14 @@ __s_clr_rpt_frm_psbl()
 	for ((j = 0;j < ${#pair_opts[@]};j++)) ;do
 	    _s_in_array "${del}" ${pair_opts[j]} && __s_del_frm_psbl ${pair_opts[j]}
 	done
-	__s_del_frm_psbl ${del}
+	__s_del_frm_psbl "${del}"
     done
 }
 
 _s_util_general_args()
 {
     local general_opts=('-v --version' '-h --help') i
-    [[ ${COMP_CWORD} == 1 ]] && [[ ${cur} =~ ^- ]] && possible=(${general_opts[@]})
+    [[ ${COMP_CWORD} == 1 ]] && [[ "${cur}" =~ ^- ]] && possible=(${general_opts[@]})
     __s_clr_rpt_frm_psbl
     for ((i = 0;i < ${#general_opts[@]};i++)) ;do
 	__s_one_in_array "${general_opts[i]}" "${COMP_WORDS[@]:1}" && return 0
@@ -75,14 +75,16 @@ __s_add_s_opts()
 
 __s_util_g_comp()
 {
-    local cur possible command
+    local cur possible command word
     COMPREPLY=()
     command="${COMP_WORDS[0]}"
     cur="${COMP_WORDS[COMP_CWORD]}"
     prev="${COMP_WORDS[COMP_CWORD - 1]}"
     _s_util_general_args ||
     { type "_${command}" &>/dev/null && "_${command}"; } &>/dev/null
-    COMPREPLY=($(compgen -W "$(_quotes "${possible[@]}")" -- ${cur}))
+    for word in "${possible[@]}" ;do
+	[[ $word =~ ^$cur ]] && COMPREPLY=("${COMPREPLY[@]}" "${word}")
+    done
     _s_in_array '' "${possible[@]}" && let "${#COMPREPLY[@]} > 0" && COMPREPLY=("${COMPREPLY[@]}" '')
 }
 
@@ -264,17 +266,17 @@ _lsutil()
 
 }
 
-_quote() 
-{ 
-    echo \'${1//\'/\'\\\'\'}\'
-}
+#_quote() 
+#{ 
+#    echo \'${1//\'/\'\\\'\'}\'
+#}
 
-_quotes()
-{
-    for arg in "$@" ;do
-	_quote "$arg"
-    done
-}
+#_quotes()
+#{
+#    for arg in "$@" ;do
+#	_quote "$arg"
+#    done
+#}
 
 _bdroot()
 {
