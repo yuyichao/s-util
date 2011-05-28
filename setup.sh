@@ -82,7 +82,7 @@ __s_util_g_comp()
     prev="${COMP_WORDS[COMP_CWORD - 1]}"
     _s_util_general_args ||
     { type "_${command}" &>/dev/null && "_${command}"; } &>/dev/null
-    COMPREPLY=($(compgen -W "${possible[*]}" -- ${cur}))
+    COMPREPLY=($(compgen -W "$(_quotes "${possible[@]}")" -- ${cur}))
     _s_in_array '' "${possible[@]}" && let "${#COMPREPLY[@]} > 0" && COMPREPLY=("${COMPREPLY[@]}" '')
 }
 
@@ -262,6 +262,18 @@ _lsutil()
 	return 0
     }
 
+}
+
+_quote() 
+{ 
+    echo \'${1//\'/\'\\\'\'}\'
+}
+
+_quotes()
+{
+    for arg in "$@" ;do
+	_quote "arg"
+    done
 }
 
 _bdroot()
