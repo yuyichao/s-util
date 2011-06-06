@@ -14,16 +14,15 @@ EOF
 
 . s_init.sh
 
-if [ $(id -u) != "0" ] ;then
-    sudo $0 -u $(whoami) "${args[@]}"
-    exit
-fi
-
 for ((i = 0;i < ${#args[@]};)) ;do
-    case "${args[@]}" in
+    case "${args[i]}" in
 	-u|--user)
 	    darg $i
 	    S_USERNAME="${args[i]}"
+	    darg $i
+	    ;;
+	-*)
+	    echo "Warning: Unrecognized argument ${args[i]}" >&2
 	    darg $i
 	    ;;
 	*)
@@ -31,6 +30,13 @@ for ((i = 0;i < ${#args[@]};)) ;do
 	    ;;
 	esac
 done
+
+[[ -z $S_USERNAME ]] && S_USERNAME=$(whoami)
+
+if [ $(id -u) != "0" ] ;then
+    sudo $0 -u "${S_USERNAME}" "${args[@]}"
+    exit
+fi
 
 for arg in "${args[@]}"
 do

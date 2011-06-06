@@ -6,6 +6,14 @@ else
     export PATH="${PATH}:${S_UTIL_INSTALL_DIR}"
 fi
 
+#__comp_fname()
+#{
+#    local __tmp_ary_1 cur
+#    eval __tmp_ary_1=\(\"\${$2[@]}\"\)
+#    eval cur="$cur"
+#    [[ $cur =~ ^/ ]]
+#}
+
 _s_in_array()
 {
     local i
