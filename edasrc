@@ -4,24 +4,24 @@ chs_edtr()
 {
     local edtrlst=('vim' 'emacs' 'vi' 'nano') edtr
     [[ ${EDITOR} != "" ]] && {
-	echo $EDITOR
-	return 0
+        echo $EDITOR
+        return 0
     }
     type editor &> /dev/null && {
-	echo editor
-	return 0
+        echo editor
+        return 0
     }
     [[ -z $DISPLAY ]] || {
-	type xdg-open &> /dev/null && {
-	    echo xdg-open
-	    return 0
-	}
+        type xdg-open &> /dev/null && {
+            echo xdg-open
+            return 0
+        }
     }
     for edtr in ${edtolst[@]} ;do
-	type "${edtr}" &> /dev/null && {
-	    echo ${edtr}
-	    return 0
-	}
+        type "${edtr}" &> /dev/null && {
+            echo ${edtr}
+            return 0
+        }
     done
     echo "Cannot find a editor to use. Please set EDITOR or link editor to the editor you want to use." >&2
     return 1

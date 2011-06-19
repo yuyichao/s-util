@@ -18,9 +18,9 @@ _s_in_array()
 {
     local i
     for ((i = 2;i <= $#;i++)) ;do
-	if [[ "$1" == "${!i}" ]] ;then
-	    return 0
-	fi
+        if [[ "$1" == "${!i}" ]] ;then
+            return 0
+        fi
     done
     return 1
 }
@@ -30,7 +30,7 @@ __s_one_in_array()
     local i list
     list=("$1")
     for ((i = 0;i < ${#list[@]};i++)) ;do
-	_s_in_array "${list[i]}" "${@:2}" && return 0
+        _s_in_array "${list[i]}" "${@:2}" && return 0
     done
     return 1
 }
@@ -39,11 +39,11 @@ __s_del_frm_psbl()
 {
     local i n psbl_opt
     for psbl_opt in "$@" ;do
-	n=${#possible[@]}
-	for ((i = 0;i < n;i++)) ;do
-	    [[ "${psbl_opt}" == "${possible[i]}" ]] && unset possible[i]
-	done
-	possible=("${possible[@]}")
+        n=${#possible[@]}
+        for ((i = 0;i < n;i++)) ;do
+            [[ "${psbl_opt}" == "${possible[i]}" ]] && unset possible[i]
+        done
+        possible=("${possible[@]}")
     done
 }
 
@@ -51,13 +51,13 @@ __s_clr_rpt_frm_psbl()
 {
     local i j n pair_opts=("${l_opts[@]}" "${s_opts[@]}" "${general_opts[@]}") del
     for ((i = 1;i < ${#COMP_WORDS[@]};i++)) ;do
-	((i == COMP_CWORD)) && continue
-	_s_in_array "${COMP_WORDS[i]}" "${possible[@]}" || continue
-	del="${COMP_WORDS[i]}"
-	for ((j = 0;j < ${#pair_opts[@]};j++)) ;do
-	    _s_in_array "${del}" ${pair_opts[j]} && __s_del_frm_psbl ${pair_opts[j]}
-	done
-	__s_del_frm_psbl "${del}"
+        ((i == COMP_CWORD)) && continue
+        _s_in_array "${COMP_WORDS[i]}" "${possible[@]}" || continue
+        del="${COMP_WORDS[i]}"
+        for ((j = 0;j < ${#pair_opts[@]};j++)) ;do
+            _s_in_array "${del}" ${pair_opts[j]} && __s_del_frm_psbl ${pair_opts[j]}
+        done
+        __s_del_frm_psbl "${del}"
     done
 }
 
@@ -67,7 +67,7 @@ _s_util_general_args()
     [[ ${COMP_CWORD} == 1 ]] && [[ "${cur}" =~ ^- ]] && possible=(${general_opts[@]})
     __s_clr_rpt_frm_psbl
     for ((i = 0;i < ${#general_opts[@]};i++)) ;do
-	__s_one_in_array "${general_opts[i]}" "${COMP_WORDS[@]:1}" && return 0
+        __s_one_in_array "${general_opts[i]}" "${COMP_WORDS[@]:1}" && return 0
     done
     return 1
 }
@@ -75,8 +75,8 @@ _s_util_general_args()
 __s_add_s_opts()
 {
     _s_in_array "${prev}" ${l_opts[@]} || {
-	possible=("${possible[@]}" ${s_opts[@]} ${l_opts[@]})
-	return 0
+        possible=("${possible[@]}" ${s_opts[@]} ${l_opts[@]})
+        return 0
     }
     return 1
 }
@@ -91,7 +91,7 @@ __s_util_g_comp()
     _s_util_general_args ||
     { type "_${command}" &>/dev/null && "_${command}"; } &>/dev/null
     for word in "${possible[@]}" ;do
-	[[ $word =~ ^$cur ]] && COMPREPLY=("${COMPREPLY[@]}" "${word}")
+        [[ $word =~ ^$cur ]] && COMPREPLY=("${COMPREPLY[@]}" "${word}")
     done
     _s_in_array '' "${possible[@]}" && let "${#COMPREPLY[@]} > 0" && COMPREPLY=("${COMPREPLY[@]}" '')
 }
@@ -105,71 +105,71 @@ _clpbd()
 {
     local l_opts clpdir i
     if [[ $prev == -u ]] || [[ $prev == --user ]] ;then
-	local usrlst=($(compgen -u "${cur}")) homeof n
-	n=${#usrlst[@]}
-	for ((i = 0;i < n;i++)) ;do
-	    eval homeof=~${usrlst[i]}
-	    case ${homeof}/ in
-		~*|//|/var/*|/srv/*|/bin/*|/sbin/*|/proc/*)
-		    unset usrlst[i]
-		    ;;
-	    esac
-	done
-	possible=("${possible[@]}" "${usrlst[@]}")
-	return 0
+        local usrlst=($(compgen -u "${cur}")) homeof n
+        n=${#usrlst[@]}
+        for ((i = 0;i < n;i++)) ;do
+            eval homeof=~${usrlst[i]}
+            case ${homeof}/ in
+                ~*|//|/var/*|/srv/*|/bin/*|/sbin/*|/proc/*)
+                    unset usrlst[i]
+                    ;;
+            esac
+        done
+        possible=("${possible[@]}" "${usrlst[@]}")
+        return 0
     fi
     local usrhome=~ action
     for ((i = 1;i < ${#COMP_WORDS[@]};i++)) ;do
-	((i == COMP_CWORD)) && continue
-	case "${COMP_WORDS[i]}" in
-	    -u|--user)
-		eval usrhome=~"${COMP_WORDS[i+1]}"
-		;;
-	    -c|--copy)
-		action="copy"
-		;;
-	    -d|--delete)
-		action="delete"
-		;;
-	    -p|--paste)
-		action="paste"
-		;;
-	    -x|--cut)
-		action="cut"
-		;;
-	    -m|--move)
-		action="move"
-		;;
-	esac
+        ((i == COMP_CWORD)) && continue
+        case "${COMP_WORDS[i]}" in
+            -u|--user)
+                eval usrhome=~"${COMP_WORDS[i+1]}"
+                ;;
+            -c|--copy)
+                action="copy"
+                ;;
+            -d|--delete)
+                action="delete"
+                ;;
+            -p|--paste)
+                action="paste"
+                ;;
+            -x|--cut)
+                action="cut"
+                ;;
+            -m|--move)
+                action="move"
+                ;;
+        esac
     done
     { [[ $usrhome =~ ^~ ]] || [[ $usrhome == / ]] ; } && return
     clpdir=${usrhome}/.sutil/_s_clipboard
     if [[ ${cur} =~ ^- ]] || { [[ $cur == "" ]] && [[ $action == "" ]]; } ;then
-	if [[ $action == "" ]] ;then
-	    l_opts=('-c --copy' '-d --delete' '-p --paste' '-u --user' '-x --cut' '-m --move')
-	else
-	    l_opts=('-u --user')
-	fi
-	possible=("${possible[@]}" $(compgen -W "${l_opts[*]}" -- ${cur}))
-	__s_clr_rpt_frm_psbl
-	return 0
+        if [[ $action == "" ]] ;then
+            l_opts=('-c --copy' '-d --delete' '-p --paste' '-u --user' '-x --cut' '-m --move')
+        else
+            l_opts=('-u --user')
+        fi
+        possible=("${possible[@]}" $(compgen -W "${l_opts[*]}" -- ${cur}))
+        __s_clr_rpt_frm_psbl
+        return 0
     else
-	case "${action}" in
-	    copy|cut)
-		possible=("${possible[@]}" $(compgen -f ${cur}))
-		__s_clr_rpt_frm_psbl
-		type compopt &>/dev/null && compopt -o filenames
-		return 0
-		;;
-	    paste|delete|move)
-		possible=("${possible[@]}" $(cd "${clpdir}" 2> /dev/null && compgen -f ${cur}))
-		__s_clr_rpt_frm_psbl
-		return 0
-		;;
-	    *)
-		return 0
-		;;
-	esac
+        case "${action}" in
+            copy|cut)
+                possible=("${possible[@]}" $(compgen -f ${cur}))
+                __s_clr_rpt_frm_psbl
+                type compopt &>/dev/null && compopt -o filenames
+                return 0
+                ;;
+            paste|delete|move)
+                possible=("${possible[@]}" $(cd "${clpdir}" 2> /dev/null && compgen -f ${cur}))
+                __s_clr_rpt_frm_psbl
+                return 0
+                ;;
+            *)
+                return 0
+                ;;
+        esac
     fi
 }
 
@@ -190,15 +190,15 @@ _spath()
     s_opts=('-r --noreg' '-n --noexec' '-f --full')
     l_opts=('-p --path')
     __s_add_s_opts && {
-	__s_incld_rdm
-	__s_clr_rpt_frm_psbl
-	return 0
+        __s_incld_rdm
+        __s_clr_rpt_frm_psbl
+        return 0
     }
     _s_in_array "${prev}" -p --path && {
-	possible=("${possible[@]}" $(compgen -f ${cur}))
-	type compopt &>/dev/null && compopt -o filenames
-	__s_clr_rpt_frm_psbl
-	return 0
+        possible=("${possible[@]}" $(compgen -f ${cur}))
+        type compopt &>/dev/null && compopt -o filenames
+        __s_clr_rpt_frm_psbl
+        return 0
     }
 }
 
@@ -263,13 +263,13 @@ _lsutil()
     local s_opts l_opts
     l_opts=('-a --add' '-d --delete')
     __s_add_s_opts && {
-	__s_clr_rpt_frm_psbl
-	return 0
+        __s_clr_rpt_frm_psbl
+        return 0
     }
     _s_in_array "${prev}" -a --add -d --delete && {
-	possible=("${possible[@]}" $(compgen -c ${cur}))
-	__s_clr_rpt_frm_psbl
-	return 0
+        possible=("${possible[@]}" $(compgen -c ${cur}))
+        __s_clr_rpt_frm_psbl
+        return 0
     }
 
 }
@@ -282,7 +282,7 @@ _lsutil()
 #_quotes()
 #{
 #    for arg in "$@" ;do
-#	_quote "$arg"
+#        _quote "$arg"
 #    done
 #}
 
@@ -304,7 +304,7 @@ __reg_complete()
     local complete_list
     complete_list=(addpkla bdroot cback cempty clpbd dlblk import-cert lsutil recget spath spid texit xopen mitclass)
     for command in "${complete_list[@]}" ;do
-	complete -F __s_util_g_comp "${command}"
+        complete -F __s_util_g_comp "${command}"
     done
 }
 

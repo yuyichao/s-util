@@ -4,7 +4,7 @@ post_instl()
 {
     local S_BASH_RC="$1" S_INSTALL_DIST="$2"
     if [ $(tail -n1 ${S_BASH_RC} | wc -l) = 0 ] ;then
-	echo >> ${S_BASH_RC}
+        echo >> ${S_BASH_RC}
     fi &&
     echo '##^^this part is generate automatically when installing' >> ${S_BASH_RC} &&
     echo "[ -r ${S_INSTALL_DIST}/setup.sh ] && . ${S_INSTALL_DIST}/setup.sh" >> ${S_BASH_RC} &&
@@ -17,23 +17,23 @@ pre_rm()
     local varlst=${s_util_dir}/vars.lst
 
     [ -r "${varlst}" ] || {
-	echo "error: cannot find ${varlst}"
-	exit 1
+        echo "error: cannot find ${varlst}"
+        exit 1
     }
 
     local S_INSTALL_DIST S_BASH_RC
 
     {
-	read S_INSTALL_DIST
-	read S_BASH_RC
+        read S_INSTALL_DIST
+        read S_BASH_RC
     } < "${varlst}" &&
     begin=$(grep -n '^##\^\^' ${S_BASH_RC} |  cut -d: -f1 | head -1) &&
     end=$(grep -n '^##\$\$' ${S_BASH_RC} |  cut -d: -f1 | head -1) &&
     [ "$begin" -lt "$end" ] &&
     mv ${S_BASH_RC} ${S_BASH_RC}~ &&
     awk "NR < ${begin} || NR > ${end}" < ${S_BASH_RC}~ > ${S_BASH_RC} || {
-	echo "warning: you may need to clear bashrc manually" >&2
-	exit 0
+        echo "warning: you may need to clear bashrc manually" >&2
+        exit 0
     }
 }
 
@@ -41,39 +41,39 @@ prefix=""
 
 for ((i = 1;i <= $#;i++)) ;do
     case ${!i} in
-	--post_instl)
-	    declare -f post_instl
-	    exit 0
-	    ;;
-	--pre_rm)
-	    declare -f pre_rm
-	    exit 0
-	    ;;
-	-t|--to)
-	    let 'i++'
-	    S_INSTALL_DIST=${!i}
-	    ;;
-	-r|--rc)
-	    let 'i++'
-	    S_BASH_RC=${!i}
-	    ;;
-	-p|--prefix)
-	    let 'i++'
-	    prefix=${!i}
-	    ;;
-	--no-uninstall)
-	    n_uinstl=1
-	    ;;
-	--force-usr)
-	    force_usr=1
-	    ;;
-	--nopstinstl)
-	    nopstinstl=1
-	    ;;
-	*)
-	    echo "error: unrecognized argument ${!i}" >&2
-	    exit 1
-	    ;;
+        --post_instl)
+            declare -f post_instl
+            exit 0
+            ;;
+        --pre_rm)
+            declare -f pre_rm
+            exit 0
+            ;;
+        -t|--to)
+            let 'i++'
+            S_INSTALL_DIST=${!i}
+            ;;
+        -r|--rc)
+            let 'i++'
+            S_BASH_RC=${!i}
+            ;;
+        -p|--prefix)
+            let 'i++'
+            prefix=${!i}
+            ;;
+        --no-uninstall)
+            n_uinstl=1
+            ;;
+        --force-usr)
+            force_usr=1
+            ;;
+        --nopstinstl)
+            nopstinstl=1
+            ;;
+        *)
+            echo "error: unrecognized argument ${!i}" >&2
+            exit 1
+            ;;
     esac
 done
 
@@ -124,10 +124,10 @@ cat /dev/null | tee "${filelst}" | tee "${cmdlst}"
 
 for file in $(for ((i = 0;i < ${#ignore[@]};i++)) ;do ((i == 0)) || echo '-and'; echo '! -regex'; echo "${ignore[i]}";done | xargs find -type f) ;do
     if [[ $file =~ $notcmd ]] ;then
-	install -m644 ${file} ${S_INSTALL_DIST}/${file} &&
-	echo "${_S_INSTALL_DIST}/${file}" >> "${filelst}" ||
-	exit 1
-	continue
+        install -m644 ${file} ${S_INSTALL_DIST}/${file} &&
+        echo "${_S_INSTALL_DIST}/${file}" >> "${filelst}" ||
+        exit 1
+        continue
     fi
     install -m755 ${file} ${S_INSTALL_DIST}/${file} &&
     echo "${_S_INSTALL_DIST}/${file}" >> "${filelst}" &&

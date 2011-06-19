@@ -4,16 +4,16 @@ s_shelp()
     cat <<EOF
 This is a command line clipboard
 USAGE
-	$(basename ${0}) [OPTIONS] FILENAMES
+        $(basename ${0}) [OPTIONS] FILENAMES
 OPTIONS
-	-d/--delete: delete from clipboard
-	-p/--paste: paste from clipboard
-	-c/--copy: copy files from current dir
-	-x/--cut: cut files from current dir
-	-m/--move: move files from clipboard
-	-u/--user: specify the clipboard owner
-	-v/--version: show the version number and exit
-	-h/--help: show this help and exit
+        -d/--delete: delete from clipboard
+        -p/--paste: paste from clipboard
+        -c/--copy: copy files from current dir
+        -x/--cut: cut files from current dir
+        -m/--move: move files from clipboard
+        -u/--user: specify the clipboard owner
+        -v/--version: show the version number and exit
+        -h/--help: show this help and exit
 EOF
 }
 
@@ -22,10 +22,10 @@ EOF
 __rname()
 {
     type logname &> /dev/null && {
-	logname 2> /dev/null || {
-	    whoami
-	    [[ $(id -u) == 0 ]] && echo "your uid is 0(root) and logname is not available. If you are using sudo to copy files from your home to somewhere else, please use -u/--user to specify the clipboard's owner you want to use" >&2
-	}
+        logname 2> /dev/null || {
+            whoami
+            [[ $(id -u) == 0 ]] && echo "your uid is 0(root) and logname is not available. If you are using sudo to copy files from your home to somewhere else, please use -u/--user to specify the clipboard's owner you want to use" >&2
+        }
     }
 }
 
@@ -33,60 +33,60 @@ action=""
 
 for ((i = 0;i < ${#args[@]};)) ;do
     case "${args[i]}" in
-	-c|--copy)
-	    darg $i
-	    [[ $action != "" ]] && [[ $action != copy ]] && {
-		echo "Only one action can be done." >&2
-		exit 1
-	    }
-	    action="copy"
-	    ;;
-	-p|--paste)
-	    darg $i
-	    [[ $action != "" ]] && [[ $action != paste ]] && {
-		echo "Only one action can be done." >&2
-		exit 1
-	    }
-	    action="paste"
-	    ;;
-	-d|--delete)
-	    darg $i
-	    [[ $action != "" ]] && [[ $action != delete ]] && {
-		echo "Only one action can be done." >&2
-		exit 1
-	    }
-	    action="delete"
-	    ;;
-	-x|--cut)
-	    darg $i
-	    [[ $action != "" ]] && [[ $action != cut ]] && {
-		echo "Only one action can be done." >&2
-		exit 1
-	    }
-	    action="cut"
-	    ;;
-	-m|--move)
-	    darg $i
-	    [[ $action != "" ]] && [[ $action != move ]] && {
-		echo "Only one action can be done." >&2
-		exit 1
-	    }
-	    action="move"
-	    ;;
-	-u|--user)
-	    darg $i
-	    eval home=~"${args[i]}"
-	    case ${home}/ in
-		~*|//|/var/*|/srv/*|/bin/*|/sbin/*|/proc/*)
-		    echo "not a common user name: ${args[i]}" >&2
-		    exit 1
-		    ;;
-	    esac
-	    darg $i
-	    ;;
-	*)
-	    let 'i++'
-	    ;;
+        -c|--copy)
+            darg $i
+            [[ $action != "" ]] && [[ $action != copy ]] && {
+                echo "Only one action can be done." >&2
+                exit 1
+            }
+            action="copy"
+            ;;
+        -p|--paste)
+            darg $i
+            [[ $action != "" ]] && [[ $action != paste ]] && {
+                echo "Only one action can be done." >&2
+                exit 1
+            }
+            action="paste"
+            ;;
+        -d|--delete)
+            darg $i
+            [[ $action != "" ]] && [[ $action != delete ]] && {
+                echo "Only one action can be done." >&2
+                exit 1
+            }
+            action="delete"
+            ;;
+        -x|--cut)
+            darg $i
+            [[ $action != "" ]] && [[ $action != cut ]] && {
+                echo "Only one action can be done." >&2
+                exit 1
+            }
+            action="cut"
+            ;;
+        -m|--move)
+            darg $i
+            [[ $action != "" ]] && [[ $action != move ]] && {
+                echo "Only one action can be done." >&2
+                exit 1
+            }
+            action="move"
+            ;;
+        -u|--user)
+            darg $i
+            eval home=~"${args[i]}"
+            case ${home}/ in
+                ~*|//|/var/*|/srv/*|/bin/*|/sbin/*|/proc/*)
+                    echo "not a common user name: ${args[i]}" >&2
+                    exit 1
+                    ;;
+            esac
+            darg $i
+            ;;
+        *)
+            let 'i++'
+            ;;
     esac
 done
 
@@ -104,65 +104,65 @@ MV="mv"
 __copy()
 {
     for ((i = 1;i <= $#;i++)) ;do
-	if [[ "${!i}" =~ ^/ ]] ;then
-	    file="${!i}"
-	else
-	    file="${PWD}/${!i}"
-	fi
-	${LN} "${file}" "${clpdir}" || exit 1
+        if [[ "${!i}" =~ ^/ ]] ;then
+            file="${!i}"
+        else
+            file="${PWD}/${!i}"
+        fi
+        ${LN} "${file}" "${clpdir}" || exit 1
     done
 }
 
 __cut()
 {
     for ((i = 1;i <= $#;i++)) ;do
-	file="${!i}"
-	${MV} "${file}" "${clpdir}" || exit 1
+        file="${!i}"
+        ${MV} "${file}" "${clpdir}" || exit 1
     done
 }
 
 __paste()
 {
     for ((i = 1;i <= $#;i++)) ;do
-	file="${clpdir}/${!i}"
-	if [ -d "${file}" ] ;then
-	    ${CP} -r "${file}/" . || exit 1
-	else
-	    if [ -f "${file}" ] ;then
-		${CP} "${file}" . || exit 1
-	    else
-		exit 1
-	    fi
-	fi
+        file="${clpdir}/${!i}"
+        if [ -d "${file}" ] ;then
+            ${CP} -r "${file}/" . || exit 1
+        else
+            if [ -f "${file}" ] ;then
+                ${CP} "${file}" . || exit 1
+            else
+                exit 1
+            fi
+        fi
     done
 }
 
 __move()
 {
     for ((i = 1;i <= $#;i++)) ;do
-	file="${clpdir}/${!i}"
-	if [[ -L ${file} ]] ;then
-	    if [ -d "${file}" ] ;then
-		${CP} -r "${file}/" . || exit 1
-	    else
-		if [ -f "${file}" ] ;then
-		    ${CP} "${file}" . || exit 1
-		else
-		    exit 1
-		fi
-	    fi
-	    ${RM} "${file}" || exit 1
-	else
-	    ${MV} "$file" . || exit 1
-	fi
+        file="${clpdir}/${!i}"
+        if [[ -L ${file} ]] ;then
+            if [ -d "${file}" ] ;then
+                ${CP} -r "${file}/" . || exit 1
+            else
+                if [ -f "${file}" ] ;then
+                    ${CP} "${file}" . || exit 1
+                else
+                    exit 1
+                fi
+            fi
+            ${RM} "${file}" || exit 1
+        else
+            ${MV} "$file" . || exit 1
+        fi
     done
 }
 
 __delete()
 {
     for ((i = 1;i <= $#;i++)) ;do
-	file="$(echo "${clpdir}/${!i}" | sed -e 's:/*$::g')"
-	${RM} "$file" || exit 1
+        file="$(echo "${clpdir}/${!i}" | sed -e 's:/*$::g')"
+        ${RM} "$file" || exit 1
     done
 }
 

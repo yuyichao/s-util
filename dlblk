@@ -5,11 +5,11 @@ s_shelp()
     cat <<EOF
 This command delete or show the blank at the end of every line of input files.
 USAGE:
-	$(basename $0) [OPTION] files
+        $(basename $0) [OPTION] files
 OPTIONS:
-	-s/--show: only show the lines, not change anything
-	-v/--version: display version and exit
-	-h/--help: show this help and exit
+        -s/--show: only show the lines, not change anything
+        -v/--version: display version and exit
+        -h/--help: show this help and exit
 EOF
 }
 
@@ -19,13 +19,13 @@ change=1
 
 for ((i = 0;i < ${#args[@]};)) ;do
     case "${args[i]}" in
-	-s|--show)
-	    darg $i
-	    change=0
-	    ;;
-	*)
-	    let 'i++'
-	    ;;
+        -s|--show)
+            darg $i
+            change=0
+            ;;
+        *)
+            let 'i++'
+            ;;
     esac
 done
 
@@ -35,6 +35,6 @@ if [[ ${change} == 0 ]] ;then
     grep -n '[[:blank:]\r][[:blank:]\r]*$' "${args[@]}"
 else
     for ((i = 0;i < ${#args[@]};i++)) ;do
-	sed -i "${args[i]}" -e '/[[:blank:]\r]$/s/[[:blank:]\r]*$//g'
+        sed -i "${args[i]}" -e '/[[:blank:]\r]$/s/[[:blank:]\r]*$//g'
     done
 fi

@@ -6,9 +6,9 @@ rec=0
 
 for ((i = 0;i < ${#args[@]};i++)) ;do
     case "${args[i]}" in
-	-r)
-	    rec=1
-	    ;;
+        -r)
+            rec=1
+            ;;
     esac
 done
 

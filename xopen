@@ -6,5 +6,9 @@ HELP_INFO='This command use xdg-open to open arbitrary file with default program
 if [ $(uname) == "Darwin" ]; then #mac os x
     open "${args[@]}" < /dev/null &>/dev/null
 else
-    xdg-open "${args[@]}" </dev/null &>/dev/null
+    if [[ -z $DISPLAY ]]; then
+        xdg-open "${args[@]}"
+    else
+        xdg-open "${args[@]}" </dev/null &>/dev/null
+    fi
 fi
