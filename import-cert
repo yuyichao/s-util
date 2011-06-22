@@ -35,8 +35,10 @@ EOF
 
 . s_init.sh
 
+tmpfile="/tmp/import-cert$$"
+
 REMHOST=${args[0]}
 REMPORT=${args[1]:-443}
-openssl s_client -connect "${REMHOST}:${REMPORT}" </dev/null 2>/dev/null | sed -ne '/-BEGIN CERTIFICATE-/,/-END CERTIFICATE-/p' > "$$${REMHOST}:${REMPORT}"
-certutil -d sql:$HOME/.pki/nssdb -A -t TC -n "$REMHOST" -i "$$${REMHOST}:${REMPORT}"
-rm "$$${REMHOST}:${REMPORT}"
+openssl s_client -connect "${REMHOST}:${REMPORT}" </dev/null 2>/dev/null | sed -ne '/-BEGIN CERTIFICATE-/,/-END CERTIFICATE-/p' > "$tmpfile"
+certutil -d sql:$HOME/.pki/nssdb -A -t TC -n "$REMHOST" -i "$tmpfile"
+rm "$tmpfile"
