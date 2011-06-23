@@ -24,8 +24,11 @@
 
 action=0
 
+user=''
+glst=''
+
 for ((i = 0;i < ${#args[@]};)) ;do
-    case "$args[i]" in
+    case "${args[i]}" in
         -n)
             [[ $action == 2 ]] && {
                 echo "Only one action can be done." >&2
@@ -42,11 +45,33 @@ for ((i = 0;i < ${#args[@]};)) ;do
             action=2
             dargs $i
             ;;
+        --userspec*)
+            [[ "${args[i]}" == --userspec ]] && {
+                dargs $i
+                user="${args[i]}"
+            } || {
+                user="${args[i]#--userspec}"
+            }
+            dargs $i
+            ;;
+        --groups*)
+            [[ "${args[i]}" == --groups ]] && {
+                dargs $i
+                glst="${args[i]}"
+            } || {
+                glst="${args[i]#--groups}"
+            }
+            dargs $i
+            ;;
         *)
             let 'i++' || true
             ;;
     esac
 done
+
+opt=''
+[[ -z $user ]] || opt="${opt} --userspec=${user}"
+[[ -z $glst ]] || opt="${opt} --groups=${glst}"
 
 nroot="${args[0]}"
 
@@ -74,7 +99,7 @@ result=0
 case $action in
     0)
         (( i >= ${#sub_dirs[@]} )) && {
-            chroot "${nroot}"
+            chroot $opt "${args[@]}"
             ((i--))
         }
         ;;
