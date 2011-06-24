@@ -20,4 +20,7 @@
 # along with s-util.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-curl http://web.mit.edu/registrar/www/schedules/csbindex.shtml 2>/dev/null | grep -e "$*" | grep -e "L01"
+file="$1"
+nick="$(echo "$file" | tr './ ' '_')"
+
+certutil -d sql:$HOME/.pki/nssdb -A -t TC -n "$nick" -i "$file"
