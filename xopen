@@ -24,6 +24,8 @@ HELP_INFO='This command use xdg-open to open arbitrary file with default program
 
 . s_init.sh
 
+[[ ${#args[@]} == 0 ]] && args[0]=.
+
 if [ $(uname) == "Darwin" ]; then #mac os x
     open "${args[@]}" < /dev/null &>/dev/null
 else
