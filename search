@@ -1,0 +1,107 @@
+#!/bin/bash
+
+# Copyright 2010, 2011 Yu Yichao, Rudy
+# yyc1992@gmail.com
+# rudyht@gmail.com
+#
+# This file is part of s-util.
+#
+# s-util is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# s-util is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with s-util.  If not, see <http://www.gnu.org/licenses/>.
+#
+
+s_shelp()
+{
+cat <<EOF
+This command search for keywords in the given directory.
+USAGE:
+        $(basename $0) [OPTIONS] [KEYWORD]
+OPTIONS:
+        -p/--path PATH: include PATH in searching
+        -i/--ignore PATH: ignore PATH in searching
+        -q/--quiet: show only the name of the matching file
+        -v/--version: show the version number and exit
+        -h/--help: show this help and exit
+EOF
+}
+
+. s_init.sh
+
+QUIET=0
+IGNORE=()
+S_PATH=()
+
+for ((i = 0;i < ${#args[@]};)) ;do
+    case "${args[i]}" in
+        -p|--path)
+            darg $i
+            S_PATH=("${S_PATH[@]}" "${args[i]}")
+            darg $i
+            ;;
+        -i|--ignore)
+            darg $i
+            IGNORE=("${IGNORE[@]}" "${args[i]}")
+            darg $i
+            ;;
+        -q|--quiet)
+            darg $i
+            QUIET=1
+            ;;
+        *)
+            let 'i++'
+            ;;
+    esac
+done
+
+[[ ${#S_PATH[@]} == 0 ]] && S_PATH=(".")
+
+[[ ${#args[@]} == 0 ]] && {
+    echo 'No keyword specified' >&2
+    exit 1
+} || {
+    KEY=${args[0]}
+    darg 0
+}
+
+ignore_arg=()
+
+for ((i = 0;i < ${#IGNORE[@]};i++)) ;do
+    ignore_path="$(echo "${IGNORE[i]}" | sed -e 's:/\./:/:g' -e 's://*:/:g')"
+    [[ $i == 0 ]] || ignore_arg=("${ignore_arg[@]}" -o)
+    ignore_arg=("${ignore_arg[@]}" -wholename "${ignore_path}" -o -wholename "${ignore_path}/*")
+done
+
+if [[ ${#ignore_arg[@]} != 0 ]] ;then
+    ignore_arg=('-and' '!' '(' "${ignore_arg[@]}" ')')
+fi
+
+for ((i = 0;i < ${#S_PATH[@]};i++)) ;do
+    [[ $S_PATH[i] =~ ^/ ]] || S_PATH[i]="./${S_PATH[i]}"
+    S_PATH[i]="$(echo "${S_PATH[i]}" | sed -e 's:/\./:/:g' -e 's://*:/:g' -e 's:/.$::')"
+    if [[ $QUIET == 1 ]] ;then
+        find "${S_PATH[i]}" -type f "${args[@]}" "${ignore_arg[@]}" -exec grep "$KEY" {} -q \; -print
+        continue
+    fi
+    find "${S_PATH[i]}" -type f "${args[@]}" "${ignore_arg[@]}" -exec bash -c "
+set $KEY "{}'
+while read line ;do
+    lines=("${lines[@]}" "$line")
+done < <(grep "$1" "$2")
+if [[ ${#lines[@]} != 0 ]] ;then
+    echo "$2"
+    for ((i = 0;i < ${#lines[@]};i++)) ;do
+        echo "${lines[i]}"
+    done
+fi
+' \;
+done
