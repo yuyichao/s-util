@@ -93,7 +93,7 @@ for ((i = 0;i < ${#S_PATH[@]};i++)) ;do
         continue
     fi
     find "${S_PATH[i]}" -type f "${args[@]}" "${ignore_arg[@]}" -exec bash -c "
-set $KEY "{}'
+set \"$KEY\" "{}'
 while read line ;do
     lines=("${lines[@]}" "$line")
 done < <(grep "$1" "$2")
