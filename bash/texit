@@ -20,18 +20,24 @@
 # along with s-util.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-HELP_INFO='This command use xdg-open to open arbitrary file with default program and redirect all annoy console output to /dev/null'
+HELP_INFO='tool to quickly convert a latex string into pdf'
 
 . s_init.sh
 
-[[ ${#args[@]} == 0 ]] && args[0]=.
+{
+    echo '\documentclass{article}\pagestyle{empty}\usepackage{feyn}\begin{document}\['
 
-if [ $(uname) == "Darwin" ]; then #mac os x
-    open "${args[@]}" < /dev/null &>/dev/null
-else
-    if [[ -z $DISPLAY ]]; then
-        xdg-open "${args[@]}"
+    if [ ${#args[@]} == 1 ]; then
+        echo "${args[0]}"
     else
-        xdg-open "${args[@]}" </dev/null &>/dev/null
+        cat
     fi
-fi
+
+    echo '\]\end{document}'
+} > tmp$$.tex
+
+pdflatex tmp$$.tex
+rm tmp$$.{tex,aux,log}
+#,synctex.gz}
+
+xopen tmp$$.pdf

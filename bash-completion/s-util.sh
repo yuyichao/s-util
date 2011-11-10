@@ -20,20 +20,6 @@
 # along with s-util.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-if [[ ":${PATH}:" =~ ":${S_UTIL_INSTALL_DIR}:" ]] ;then
-    export PATH=${PATH}
-else
-    export PATH="${PATH}:${S_UTIL_INSTALL_DIR}"
-fi
-
-#__comp_fname()
-#{
-#    local __tmp_ary_1 cur
-#    eval __tmp_ary_1=\(\"\${$2[@]}\"\)
-#    eval cur="$cur"
-#    [[ $cur =~ ^/ ]]
-#}
-
 _s_in_array()
 {
     local i
@@ -83,7 +69,7 @@ __s_clr_rpt_frm_psbl()
 
 _s_util_general_args()
 {
-    local general_opts=('-v --version' '-h --help') i
+    local general_opts=('-v'$'\n''--version' '-h'$'\n''--help') i
     [[ ${COMP_CWORD} == 1 ]] && [[ "${cur}" =~ ^- ]] && possible=(${general_opts[@]})
     __s_clr_rpt_frm_psbl
     for ((i = 0;i < ${#general_opts[@]};i++)) ;do
@@ -166,9 +152,9 @@ _clpbd()
     clpdir=${usrhome}/.sutil/_s_clipboard
     if [[ ${cur} =~ ^- ]] || { [[ $cur == "" ]] && [[ $action == "" ]]; } ;then
         if [[ $action == "" ]] ;then
-            l_opts=('-c --copy' '-d --delete' '-p --paste' '-u --user' '-x --cut' '-m --move')
+            l_opts=('-c'$'\n''--copy' '-d'$'\n''--delete' '-p'$'\n''--paste' '-u'$'\n''--user' '-x'$'\n''--cut' '-m'$'\n''--move')
         else
-            l_opts=('-u --user')
+            l_opts=('-u'$'\n''--user')
         fi
         possible=("${possible[@]}" $(compgen -W "${l_opts[*]}" -- ${cur}))
         __s_clr_rpt_frm_psbl
@@ -207,8 +193,8 @@ _spid()
 _spath()
 {
     local s_opts l_opts
-    s_opts=('-r --noreg' '-n --noexec' '-f --full')
-    l_opts=('-p --path')
+    s_opts=('-r'$'\n''--noreg' '-n'$'\n''--noexec' '-f'$'\n''--full')
+    l_opts=('-p'$'\n''--path')
     __s_add_s_opts && {
         __s_incld_rdm
         __s_clr_rpt_frm_psbl
@@ -230,7 +216,7 @@ _addpkla()
 _recget()
 {
     local s_opts l_opts
-    s_opts=('-b --background')
+    s_opts=('-b'$'\n''--background')
     l_opts=()
     __s_add_s_opts
     __s_clr_rpt_frm_psbl
@@ -270,7 +256,7 @@ _mitclass()
 _dlblk()
 {
     local s_opts l_opts
-    s_opts=('-s --show')
+    s_opts=('-s'$'\n''--show')
     l_opts=()
     __s_add_s_opts
     possible=("${possible[@]}" $(compgen -f ${cur}))
@@ -281,7 +267,7 @@ _dlblk()
 _lsutil()
 {
     local s_opts l_opts
-    l_opts=('-a --add' '-d --delete')
+    l_opts=('-a'$'\n''--add' '-d'$'\n''--delete')
     __s_add_s_opts && {
         __s_clr_rpt_frm_psbl
         return 0
@@ -321,6 +307,7 @@ _texit()
 
 __reg_complete()
 {
+    local IFS=$'\n'
     local complete_list
     complete_list=(addpkla bdroot cback cempty clpbd dlblk import-cert lsutil recget spath spid texit xopen mitclass)
     for command in "${complete_list[@]}" ;do

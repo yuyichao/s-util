@@ -20,25 +20,20 @@
 # along with s-util.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-HELP_INFO='tool to quickly convert a latex string into pdf'
+HELP_INFO='This command use xdg-open(on Linux)/open(on Mac) to open arbitrary file with default program and redirect all annoy console output to /dev/null'
 
 . s_init.sh
 
-{
-    echo '\documentclass{article}\pagestyle{empty}\usepackage{feyn}\begin{document}\['
+[[ ${#args[@]} == 0 ]] && args[0]=.
 
-    if [ ${#args[@]} == 1 ]; then
-        echo "${args[0]}"
+if type xdg-open &> /dev/null; then
+    if [[ -z $DISPLAY ]]; then
+        exec xdg-open "${args[@]}"
     else
-        cat
+        exec xdg-open "${args[@]}" </dev/null &>/dev/null &
     fi
-
-    echo '\]\end{document}'
-} > tmp$$.tex
-
-#do you really need a && here, I think it is ok to delete those files even if pdflatex fails
-pdflatex tmp$$.tex
-rm tmp$$.{tex,aux,log}
-#,synctex.gz}
-
-xopen tmp$$.pdf
+elif type open &> /dev/null; then
+    exec open "${args[@]}" < /dev/null &>/dev/null &
+else
+    echo "Cannot find right program to use."
+fi

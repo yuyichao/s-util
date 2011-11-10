@@ -84,7 +84,7 @@ for ((i = 1;i <= $#;i++)) ;do
         --no-uninstall)
             n_uinstl=1
             ;;
-        --force-usr)
+nnnnnn        --force-usr)
             force_usr=1
             ;;
         --nopstinstl)
