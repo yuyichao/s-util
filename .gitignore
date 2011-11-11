@@ -4,3 +4,4 @@
 .*/
 *.lst
 tmp
+build/
