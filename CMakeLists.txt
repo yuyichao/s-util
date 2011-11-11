@@ -1,5 +1,3 @@
-#!/bin/bash
-
 # Copyright 2010, 2011 Yu Yichao, Rudy
 # yyc1992@gmail.com
 # rudyht@gmail.com
@@ -20,39 +18,12 @@
 # along with s-util.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-S_U_VERSION=
+cmake_minimum_required(VERSION 2.6)
+project(S_UTIL)
+aux_source_directory(bash BASH_LIST)
+aux_source_directory(python PYTHON_LIST)
+set(PACKAGE_VERSION "0.3.1")
+set(PACKAGE_NAME "s-util")
+set(PACKAGE_TARNAME "s-util")
+set(PACKAGE_STRING "${PACKAGE_NAME} ${PACKAGE_VERSION}")
 
-darg()
-{
-    if [[ $# == 0 ]] ;then
-        n=0
-    else
-        n=$1
-    fi
-    let 'n >= 0' || return 1
-    args=("${args[@]:0:n}" "${args[@]:n + 1}")
-}
-
-args=("$@")
-set --
-for ((i = 0;i < ${#args[@]};)) ;do
-    case "${args[i]}" in
-        -h|--help)
-            if type s_shelp &> /dev/null ;then
-                s_shelp
-            else
-                echo "$HELP_INFO"
-            fi
-            darg $i
-            exit
-            ;;
-        -v|--version)
-            echo ${S_U_VERSION}
-            darg $i
-            exit
-            ;;
-        *)
-            let 'i++' || true
-            ;;
-    esac
-done

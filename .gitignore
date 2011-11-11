@@ -5,3 +5,4 @@
 *.lst
 tmp
 __pycache__/
+build/
