@@ -20,9 +20,43 @@
 
 cmake_minimum_required(VERSION 2.6)
 project(S_UTIL)
-aux_source_directory(bash BASH_LIST)
-aux_source_directory(python PYTHON_LIST)
+file(GLOB_RECURSE BASH_LIST "bash/*")
+file(GLOB_RECURSE PYTHON_LIST "python/*.py")
 set(PACKAGE_VERSION "0.3.1")
 set(PACKAGE_NAME "s-util")
 set(PACKAGE_TARNAME "s-util")
 set(PACKAGE_STRING "${PACKAGE_NAME} ${PACKAGE_VERSION}")
+
+if(NOT DEFINED BIN_INSTALL_DIR)
+  set(BIN_INSTALL_DIR "${CMAKE_INSTALL_PREFIX}/bin")
+endif(NOT DEFINED BIN_INSTALL_DIR)
+
+if(NOT DEFINED BASH_COMPLETION_INSTALL_DIR)
+  set(BASH_COMPLETION_INSTALL_DIR "/etc/bash_completion.d")
+endif(NOT DEFINED BASH_COMPLETION_INSTALL_DIR)
+
+foreach(pyfile ${PYTHON_LIST})
+  string(REGEX REPLACE "^.*/(.*)\\.py\$" "\\1" binfile "${pyfile}")
+  install(FILES "${pyfile}"
+    DESTINATION "${BIN_INSTALL_DIR}"
+    PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE
+    RENAME "${binfile}")
+endforeach(pyfile)
+
+foreach(shfile ${BASH_LIST})
+  string(REGEX REPLACE "^.*/(.*)\$" "\\1" binfile "${shfile}")
+  if("${shfile}" MATCHES "\\.sh\$")
+    install(FILES "${shfile}"
+      DESTINATION "${BIN_INSTALL_DIR}"
+      PERMISSIONS OWNER_READ OWNER_WRITE GROUP_READ WORLD_READ
+      RENAME "${binfile}")
+  else("${shfile}" MATCHES "\\.sh\$")
+    install(FILES "${shfile}"
+      DESTINATION "${BIN_INSTALL_DIR}"
+      PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE
+      RENAME "${binfile}")
+  endif("${shfile}" MATCHES "\\.sh\$")
+endforeach(shfile)
+
+install(FILES "bash-completion/s-util.sh"
+  DESTINATION "${BASH_COMPLETION_INSTALL_DIR}")
