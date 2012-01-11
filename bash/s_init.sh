@@ -22,8 +22,7 @@
 
 S_U_VERSION=
 
-darg()
-{
+darg() {
     if [[ $# == 0 ]] ;then
         n=0
     else

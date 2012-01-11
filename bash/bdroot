@@ -30,7 +30,7 @@ glst=''
 for ((i = 0;i < ${#args[@]};)) ;do
     case "${args[i]}" in
         -n)
-            [[ $action == 2 ]] && {
+            ((action == 2)) && {
                 echo "Only one action can be done." >&2
                 exit 1
             }
@@ -38,7 +38,7 @@ for ((i = 0;i < ${#args[@]};)) ;do
             dargs $i
             ;;
         -u)
-            [[ $action == 1 ]] && {
+            ((action == 1)) && {
                 echo "Only one action can be done." >&2
                 exit 1
             }
@@ -46,7 +46,7 @@ for ((i = 0;i < ${#args[@]};)) ;do
             dargs $i
             ;;
         --userspec*)
-            [[ "${args[i]}" == --userspec ]] && {
+            [[ ${args[i]} == --userspec ]] && {
                 dargs $i
                 user="${args[i]}"
             } || {
@@ -55,7 +55,7 @@ for ((i = 0;i < ${#args[@]};)) ;do
             dargs $i
             ;;
         --groups*)
-            [[ "${args[i]}" == --groups ]] && {
+            [[ ${args[i]} == --groups ]] && {
                 dargs $i
                 glst="${args[i]}"
             } || {
@@ -64,7 +64,7 @@ for ((i = 0;i < ${#args[@]};)) ;do
             dargs $i
             ;;
         *)
-            let 'i++' || true
+            ((i++)) || true
             ;;
     esac
 done
@@ -98,13 +98,13 @@ fi
 result=0
 case $action in
     0)
-        (( i >= ${#sub_dirs[@]} )) && {
+        ((i >= ${#sub_dirs[@]})) && {
             chroot $opt "${args[@]}"
             ((i--))
         }
         ;;
     1)
-        (( i >= ${#sub_dirs[@]} )) && exit 0
+        ((i >= ${#sub_dirs[@]})) && exit 0
         result=1
         ;;
 esac

@@ -52,7 +52,7 @@ done
 [[ ${#args[@]} == 0 ]] && exit 1
 
 if [[ ${change} == 0 ]] ;then
-    grep -n '[[:blank:]\r][[:blank:]\r]*$' "${args[@]}"
+    grep -n '[[:blank:]'$'\r''][[:blank:]'$'\r'']*$' "${args[@]}"
 else
     for ((i = 0;i < ${#args[@]};i++)) ;do
         sed -i "${args[i]}" -e '/[[:blank:]\r]$/s/[[:blank:]\r]*$//g'

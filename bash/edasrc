@@ -56,5 +56,5 @@ edtr="$(chs_edtr)" || exit $?
 if [[ -z $DISPLAY ]] ;then
     ${edtr} ${filelist}
 else
-    ${edtr} ${filelist} &> /dev/null &    
+    ${edtr} ${filelist} &> /dev/null &
 fi

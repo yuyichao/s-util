@@ -36,15 +36,16 @@ for ((i = 0;i < ${#args[@]};)) ;do
     esac
 done
 
-if [[ $approx == 0 ]] &&
-    ( ( [[ "${args[0]}" == 'n' ]] ||
-            [[ "${args[0]}" =~ ^[0-9] ]]) &&
-        ((${#args[@]} != 1)) ) ;then
+if ((!approx)) && ((${#args[@]} != 1)) &&
+    [[ ${args[0]} =~ ^(n|[0-9][a-zA-Z]*)$ ]] ;then
     sektion="${args[0]}"
     darg 0
 else
     sektion=0
 fi
+
+#TODO: section 0???
+
 for query in "${args[@]}" ;do
     curl -s "http://manpages.debian.net/cgi-bin/man.cgi?query=${query}&sektion=${sektion}&format=ascii" | less
 done

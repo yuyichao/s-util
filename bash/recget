@@ -20,6 +20,8 @@
 # along with s-util.  If not, see <http://www.gnu.org/licenses/>.
 #
 
+#TODO: backend/options
+
 s_shelp()
 {
     cat<<EOF
@@ -52,4 +54,3 @@ if [ $background == 1 ] ;then
 else
     wget -c -r -np -k -L -p "${args[0]}"
 fi
-

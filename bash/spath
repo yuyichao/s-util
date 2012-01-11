@@ -20,9 +20,8 @@
 # along with s-util.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-s_shelp()
-{
-cat <<EOF
+s_shelp() {
+    cat <<EOF
 This command search for files in the PATH
 USAGE:
         $(basename $0) [OPTIONS] [KEYWORDS]
@@ -69,15 +68,15 @@ for ((i = 0;i < ${#args[@]};)) ;do
 done
 
 command="find -L ${s_path//:/ } -maxdepth 1 -type f"
-[ ${NONE_EXEC} = 0 ] && command="${command} -and -perm /111"
+((NONE_EXEC)) || command="${command} -and -perm /111"
 
-if [ "$FULL_PATH" = 1 ] ;then
+if ((FULL_PATH)) ;then
     EXTRA=''
 else
     EXTRA='s:^.*/::g'
 fi
 
-if [ ${#args[@]} = "0" ] ;then
+if ((${#args[@]} == 0)) ;then
     $command | if [[ "${EXTRA}" != "" ]] ;then
         sed -e "${EXTRA}"
     else
@@ -87,14 +86,14 @@ fi
 
 ONE_KEYWORD=0
 
-if [ ${#args[@]} = "1" ] ;then
+if ((${#args[@]} == 1)) ;then
     ONE_KEYWORD=1
 fi
 
 for ((i = 0;i < ${#args[@]};i++)) ;do
     key="${args[i]}"
-    [ ${ONE_KEYWORD} = 0 ] && echo "${key}:"
-    if [ "$REG" = 1 ] ;then
+    ((ONE_KEYWORD)) || echo "${key}:"
+    if ((REG)) ;then
         ${command}
     else
         ${command} -name "${key}"
@@ -102,7 +101,7 @@ for ((i = 0;i < ${#args[@]};i++)) ;do
         sed -e "${EXTRA}"
     else
         tee
-    fi | if [[ "$REG" = 1 ]] ;then
+    fi | if ((REG)) ;then
         grep "${key}"
     else
         tee

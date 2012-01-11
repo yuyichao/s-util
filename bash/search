@@ -20,9 +20,10 @@
 # along with s-util.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-s_shelp()
-{
-cat <<EOF
+#TODO: use python
+
+s_shelp() {
+    cat <<EOF
 This command search for keywords in the given directory.
 USAGE:
         $(basename $0) [OPTIONS] [KEYWORD]
