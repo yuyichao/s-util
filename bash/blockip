@@ -1,0 +1,28 @@
+#!/bin/bash
+
+eval 'args=('"$(getopt -n $(basename "$0") -s bash -l 'delete' --l 'file:' 'df:' "$@")"')'
+
+action='-I'
+iplst=()
+
+for ((i = 0;i < ${#args[@]};i++)) ;do
+    case "${args[i]}" in
+        -d|--delete)
+            action='-D'
+            ;;
+        -f|--file)
+            ((i++))
+            iplst+=($(sed "${args[i]}" -e '/^#/d'))
+            ;;
+        --)
+            ((i++))
+            break
+            ;;
+    esac
+done
+
+iplst+=("${args[@]:i}")
+
+for ip in "${iplst[@]}"; do
+    iptables $action INPUT -s "$ip" -j DROP
+done
