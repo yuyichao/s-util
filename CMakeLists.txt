@@ -35,6 +35,10 @@ if(NOT DEFINED BASH_COMPLETION_INSTALL_DIR)
   set(BASH_COMPLETION_INSTALL_DIR "/etc/bash_completion.d")
 endif(NOT DEFINED BASH_COMPLETION_INSTALL_DIR)
 
+if(NOT DEFINED PROFILE_INSTALL_DIR)
+  set(PROFILE_INSTALL_DIR "/etc/profile.d")
+endif(NOT DEFINED PROFILE_INSTALL_DIR)
+
 foreach(pyfile ${PYTHON_LIST})
   string(REGEX REPLACE "^.*/(.*)\\.py\$" "\\1" binfile "${pyfile}")
   install(FILES "${pyfile}"
@@ -58,5 +62,10 @@ foreach(shfile ${BASH_LIST})
   endif("${shfile}" MATCHES "\\.sh\$")
 endforeach(shfile)
 
-install(FILES "bash-completion/s-util.sh"
-  DESTINATION "${BASH_COMPLETION_INSTALL_DIR}")
+install(FILES "bash-completion.sh"
+  DESTINATION "${BASH_COMPLETION_INSTALL_DIR}"
+  RENAME "${s-util.sh}")
+
+install(FILES "profile.sh"
+  DESTINATION "${PROFILE_INSTALL_DIR}"
+  RENAME "${s-util.sh}")
