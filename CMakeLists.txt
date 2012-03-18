@@ -68,8 +68,8 @@ endforeach(shfile)
 
 install(FILES "bash-completion.sh"
   DESTINATION "${BASH_COMPLETION_INSTALL_DIR}"
-  RENAME "${s-util.sh}")
+  RENAME "s-util.sh")
 
 install(FILES "profile.sh"
   DESTINATION "${PROFILE_INSTALL_DIR}"
-  RENAME "${s-util.sh}")
+  RENAME "s-util.sh")

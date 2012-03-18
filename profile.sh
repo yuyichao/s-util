@@ -19,6 +19,4 @@ __s_util_init_alias() {
     ! [[ -z $XDG_CONFIG_DIRS ]] && {
         _dirlst2array xdg_dirs "$XDG_CONFIG_DIRS"
     }
-    while read line; do
-    done
 }
